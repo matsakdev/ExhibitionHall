@@ -1,0 +1,9 @@
+.items{
+  display: flex;
+  flex-wrap: wrap;
+  .card{
+    display: inline-block;
+    margin: 1.5rem;
+    width: 25rem;
+  }
+}
