@@ -76,9 +76,9 @@ Add `dev` and `build` scripts in your `package.json` file.
 
 ```json
 "scripts": {
-  "dev": "parcel ./src/index.html",
+  "dev": "parcel ./src/test.html",
   "prebuild": "npx rimraf build",
-  "build": "parcel build --public-url ./ ./src/index.html --experimental-scope-hoisting --out-dir build"
+  "build": "parcel build --public-url ./ ./src/test.html --experimental-scope-hoisting --out-dir build"
 }
 ```
 
