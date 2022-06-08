@@ -1,9 +1,6 @@
 package com.matsak.exhibitionhall.db.mysql;
 
-import com.matsak.exhibitionhall.db.dao.DAOFactory;
-import com.matsak.exhibitionhall.db.dao.ExpositionDAO;
-import com.matsak.exhibitionhall.db.dao.TicketDAO;
-import com.matsak.exhibitionhall.db.dao.UserDAO;
+import com.matsak.exhibitionhall.db.dao.*;
 import com.matsak.exhibitionhall.db.entity.Exposition;
 
 
@@ -15,6 +12,7 @@ public class MySQLDAOFactory extends DAOFactory {
     private UserDAO userDAO;
     private TicketDAO ticketDAO;
     private ExpositionDAO expositionDAO;
+    private ShowroomDAO showroomDAO;
 
     @Override
     public void setPooledConnection() {
@@ -28,7 +26,7 @@ public class MySQLDAOFactory extends DAOFactory {
     }
 
     @Override
-    public TicketDAO getPurchaseDAO() {
+    public TicketDAO getTicketDAO() {
         if (ticketDAO == null) ticketDAO = new MySQLTicketDAO();
         return ticketDAO;
     }
@@ -37,5 +35,20 @@ public class MySQLDAOFactory extends DAOFactory {
     public ExpositionDAO getExpositionDAO() {
         if (expositionDAO == null) expositionDAO = new MySQLExpositionDAO();
         return expositionDAO;
+    }
+
+    @Override
+    public ShowroomDAO getShowroomDAO() {
+        if (showroomDAO == null) showroomDAO = new MySQLShowroomDAO();
+        return showroomDAO;
+    }
+
+    @Override
+    public void close(AutoCloseable resource){
+        try {
+            resource.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

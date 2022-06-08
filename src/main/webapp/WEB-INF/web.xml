@@ -23,6 +23,7 @@
     <filter-mapping>
         <filter-name>AccessFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <filter>
@@ -32,6 +33,7 @@
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <servlet-mapping>
@@ -40,8 +42,10 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Controller</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/main</url-pattern>
         <url-pattern>/admin</url-pattern>
+        <url-pattern>/admin/expositions/*</url-pattern>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
 
 </web-app>

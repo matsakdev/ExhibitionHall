@@ -9,25 +9,18 @@ public class Exposition {
     private String expName;
     private Timestamp expStartDate;
     private Timestamp expFinalDate;
-    private Time expStartTime;
-    private Time expEndTime;
+    private String Description;
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String description) {
+        Description = description;
+    }
+
     private Set<Showroom> relatedShowrooms;
 
-    public Time getExpStartTime() {
-        return expStartTime;
-    }
-
-    public void setExpStartTime(Time expStartTime) {
-        this.expStartTime = expStartTime;
-    }
-
-    public Time getExpEndTime() {
-        return expEndTime;
-    }
-
-    public void setExpEndTime(Time expEndTime) {
-        this.expEndTime = expEndTime;
-    }
 
     private double price;
     private String author;
@@ -87,8 +80,7 @@ public class Exposition {
                 ", expName='" + expName + '\'' +
                 ", expStartDate=" + expStartDate +
                 ", expFinalDate=" + expFinalDate +
-                ", expStartTime=" + expStartTime +
-                ", expEndTime=" + expEndTime +
+                ", Description='" + Description + '\'' +
                 ", relatedShowrooms=" + relatedShowrooms +
                 ", price=" + price +
                 ", author='" + author + '\'' +

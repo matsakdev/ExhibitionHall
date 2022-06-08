@@ -28,7 +28,7 @@ public abstract class DAOFactory {
 
     public abstract void setPooledConnection();
 
-    public static ConnectionPool getPooledConnection(){
+    public ConnectionPool getPooledConnection(){
         if (instance != null) return pooledConnection;
         else{
             //todo log
@@ -37,9 +37,10 @@ public abstract class DAOFactory {
     }
 
     public abstract UserDAO getUserDAO();
-    public abstract TicketDAO getPurchaseDAO();
-
+    public abstract TicketDAO getTicketDAO();
     public abstract ExpositionDAO getExpositionDAO();
+    public abstract ShowroomDAO getShowroomDAO();
+    public abstract void close(AutoCloseable resource);
 
 
 }

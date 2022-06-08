@@ -31,51 +31,7 @@
         <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
     </div>
     <div class="container-fluid col-md-12">
-        <div class="widnowChanger">
-            CHANGE WINDOW
-        </div>
-        <div class="tableBox col-md-10">
-            <div>
-                <table class="table table-striped table-hover caption-top">
-                    <caption>List of expositions</caption>
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td>Footer</td>
-                            <td>Footer</td>
-                            <td>Footer</td>
-                            <td>Footer</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+        <tf:adminTable></tf:adminTable>
     </div>
 </div>
 </body>

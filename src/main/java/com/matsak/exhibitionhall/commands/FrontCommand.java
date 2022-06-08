@@ -5,10 +5,13 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
 abstract public class FrontCommand {
+    private static final Logger logger = LogManager.getLogger(FrontCommand.class);
     protected ServletContext context;
     protected HttpServletRequest request;
     protected HttpServletResponse response;
@@ -25,6 +28,7 @@ abstract public class FrontCommand {
     public abstract void process() throws ServletException, IOException;
 
     protected void forward(String target) throws ServletException, IOException {
+        logger.trace("Forward to " + target);
         target = String.format("/jsp/%s", target);
         RequestDispatcher dispatcher = context.getRequestDispatcher(target);
         dispatcher.forward(request, response);

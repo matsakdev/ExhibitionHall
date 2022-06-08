@@ -12,5 +12,6 @@ public interface ExpositionDAO {
     List<Exposition> getAllExpositions();
     List<Exposition> getAllExpositions(String order, int begin, int end) throws SQLException;
     List<Exposition> getCurrentExpositions();
+    Exposition getById(long id) throws SQLException;
 
 }

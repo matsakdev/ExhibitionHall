@@ -30,7 +30,9 @@ public class LoginCommand extends FrontCommand{
                 }
 //                forward("index.jsp");
                 if (user.getUserRole().equals("administrator")) {
-                    request.getRequestDispatcher("/admin").forward(request, response);
+//                    request.getRequestDispatcher("/admin").forward(request, response);
+                    response.sendRedirect("admin");
+                    return;
                 }
                 response.sendRedirect("controller");
             }

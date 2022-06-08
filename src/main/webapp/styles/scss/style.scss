@@ -67,3 +67,89 @@ height: 100%;
 .endCard{
   margin-top: auto;
 }
+
+.editButton{
+  :hover {
+    color: green;
+  }
+}
+
+.editButtonsColumn {
+  color: black;
+}
+
+.editButtonsColumn{
+  :hover{
+    color: blue;
+  }
+}
+
+.adminTableRow {
+  cursor: pointer;
+}
+
+.adminTableRow{
+  :hover{
+    font-size: 18px;
+  }
+}
+
+.imageHolder {
+  height: 25rem;
+  border: #1c1f23 2px solid;
+  border-radius: 2%;
+  margin-top: 5rem;
+  margin-left: 5rem;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  .uploadBox {
+    align-self: center;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    .bi-upload {
+      align-self: center;
+      justify-self: center;
+      width: 5rem; height: auto;
+    }
+  }
+}
+
+.infoInputs {
+  display: flex;
+  flex-direction: column;
+  margin-left: 5rem;
+  margin-top: 5rem;
+  justify-content: center;
+  align-content: center;
+}
+
+.roomsList {
+  margin-top: 5rem;
+  margin-left: 5rem;
+}
+
+.descriptionArea {
+  margin-top: 5rem;
+  margin-left: 5rem;
+
+  textarea {
+    resize: none;
+    height: 10em;
+  }
+}
+
+.datePicker {
+  width: 49%;
+  display: inline-block;
+}
+
+.dateLabel {
+  display: block;
+}
+
+.dateInput {
+  width: 100%;
+}

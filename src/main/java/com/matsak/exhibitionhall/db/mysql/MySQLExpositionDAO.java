@@ -13,6 +13,7 @@ import java.util.List;
 
 public class MySQLExpositionDAO implements ExpositionDAO {
     private static final String GET_EXPOSITIONS_BY_PARAMS = "SELECT e.* FROM expositions e ORDER BY ? LIMIT ?, ?";
+    private static final String GET_EXPOSITION_BY_ID = "SELECT * FROM expositions WHERE Id=?";
     Logger logger = LogManager.getLogger(MySQLExpositionDAO.class);
 
     @Override
@@ -31,7 +32,7 @@ public class MySQLExpositionDAO implements ExpositionDAO {
     }
 
     @Override
-    public List<Exposition> getAllExpositions(String orderType, int shift, int cardsAmount) throws SQLException {
+    public List<Exposition> getAllExpositions(String orderType, int shift, int rowsAmount) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -53,33 +54,28 @@ public class MySQLExpositionDAO implements ExpositionDAO {
             }
         }
         try{
-            connection = DAOFactory.getPooledConnection().getConnection(true);
-            logger.debug("Connection: " + connection);
+            connection = DAOFactory.getInstance().getPooledConnection().getConnection(true);
+            if (logger.isDebugEnabled()){
+                logger.debug("Connection: " + connection);
+            }
             List<Exposition> expositions = new ArrayList<>();
             stmt = connection.prepareStatement(GET_EXPOSITIONS_BY_PARAMS);
             int num = 0;
             stmt.setString(++num, order);
             stmt.setInt(++num, shift);
-            stmt.setInt(++num, cardsAmount);
+            stmt.setInt(++num, rowsAmount);
             rs = stmt.executeQuery();
             while (rs.next()){
-                Exposition exposition = new Exposition();
-                exposition.setId(rs.getLong("Id"));
-                exposition.setExpName(rs.getString("EXP_name"));
-                exposition.setExpStartDate(rs.getTimestamp("EXP_startDate"));
-                exposition.setExpFinalDate(rs.getTimestamp("EXP_finalDate"));
-                exposition.setExpStartTime(rs.getTime("EXP_startTime"));
-                exposition.setExpEndTime(rs.getTime("EXP_endTime"));
-                exposition.setPrice(rs.getDouble("Price"));
-                exposition.setAuthor(rs.getString("Author"));
-                expositions.add(exposition);
+                expositions.add(initializeExposition(rs));
             }
             return expositions;
         } catch (SQLException e) {
-            logger.error("Failed to get list of expositions");
+            logger.error("Failed to get list of expositions" + e.getMessage());
             throw new SQLException(e);
-        }
-        finally {
+        } catch (Exception e) {
+            logger.error("Failed to get instance of DB" + e.getMessage());
+            throw new RuntimeException(e);
+        } finally {
             close(rs);
             close(stmt);
             close(connection);
@@ -97,5 +93,53 @@ public class MySQLExpositionDAO implements ExpositionDAO {
     @Override
     public List<Exposition> getCurrentExpositions() {
         return null;
+    }
+
+    @Override
+    public Exposition getById(long id) throws SQLException {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Exposition exposition = null;
+        try {
+            connection = DAOFactory.getInstance().getPooledConnection().getConnection(true);
+            if (logger.isDebugEnabled()){
+                logger.debug("Connection: " + connection);
+            }
+            stmt = connection.prepareStatement(GET_EXPOSITION_BY_ID);
+            stmt.setLong(1, id);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                exposition = initializeExposition(rs);
+                return exposition;
+            }
+            else throw new SQLException("Exposition with id " + id + "isn't existing");
+        } catch (SQLException e) {
+            logger.error("Failed to get list of expositions" + e.getMessage());
+            throw new SQLException(e);
+        } catch (Exception e) {
+            logger.error("Failed to get instance of DB" + e.getMessage());
+        } finally {
+            close(rs);
+            close(stmt);
+            close(connection);
+        }
+        return exposition;
+    }
+
+    private Exposition initializeExposition(ResultSet rs) throws SQLException {
+        Exposition exposition = new Exposition();
+        try {
+            exposition.setId(rs.getLong("Id"));
+            exposition.setExpName(rs.getString("EXP_name"));
+            exposition.setExpStartDate(rs.getTimestamp("EXP_startDate"));
+            exposition.setExpFinalDate(rs.getTimestamp("EXP_finalDate"));
+            exposition.setPrice(rs.getDouble("Price"));
+            exposition.setAuthor(rs.getString("Author"));
+            exposition.setDescription(rs.getString("Description"));
+        } catch (SQLException e) {
+            logger.error("Failed initializing obtained from DB Exposition. Object is not created.");
+        }
+        return exposition;
     }
 }

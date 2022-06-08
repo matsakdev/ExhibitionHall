@@ -18,6 +18,8 @@ public class Dispatcher {
         commands.put("error", new UnknownCommand());
         commands.put("main", new GenerateMainPageCommand());
         commands.put("profile", new ProfileCommand());
+        commands.put("expositions", new EditingFormLoadingCommand());
+        commands.put("updateExposition", new UpdateExpositionCommand());
     }
 
     public static FrontCommand dispatch(HttpServletRequest request){
@@ -25,10 +27,18 @@ public class Dispatcher {
         if (path.startsWith("/?") || path.trim().equals("/")) {
             return commands.get("main");
         }
-        if (path.startsWith("/admin")) {
-            return commands.get("admin");
+        if (path.startsWith("/main")) {
+            return commands.get("main");
         }
-        else if (path.startsWith("/login")) {
+        if (path.startsWith("/admin")) {
+            String regex = "(\\/admin\\/expositions\\/[0-9]+)";
+            if (path.matches(regex + "$")) {
+                return commands.get("expositions");
+            } else if (path.matches(regex + "\\/update")) {
+                return commands.get("updateExposition");
+            }
+            return commands.get("admin");
+        } else if (path.startsWith("/login")) {
             return commands.get("login");
         }
         else if (path.startsWith("/register")) {
