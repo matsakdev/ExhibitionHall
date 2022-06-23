@@ -10,6 +10,15 @@ public class Exposition {
     private Timestamp expStartDate;
     private Timestamp expFinalDate;
     private String Description;
+    private String Image;
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        Image = image;
+    }
 
     public String getDescription() {
         return Description;

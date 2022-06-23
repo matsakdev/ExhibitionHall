@@ -2,6 +2,7 @@ package com.matsak.exhibitionhall.filters;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,6 +17,7 @@ public class AuthenticationFilter implements Filter {
 
     public void init(FilterConfig config) throws ServletException {
         closedPages.add("/profile");
+        closedPages.add("/order");
     }
 
     public void destroy() {
@@ -33,8 +35,13 @@ public class AuthenticationFilter implements Filter {
                 }
                 else {
                     logger.trace("User must auth before using this page: " + page);
+                    if (((HttpServletRequest) request).getHeader("Content-Type").equals("application/json;charset=utf-8")) {
+                        req.getSession().setAttribute("jsonRequest", true);
+                    }
                     request.setAttribute("authNeed", true);
-                    request.getRequestDispatcher("/login").forward(request, response);
+//                    request.getRequestDispatcher("/login").forward(request, response);
+                    HttpServletResponse res = (HttpServletResponse) response;
+                    res.sendRedirect(((HttpServletRequest) request).getContextPath() + "/login");
                 }
                 return;
             }

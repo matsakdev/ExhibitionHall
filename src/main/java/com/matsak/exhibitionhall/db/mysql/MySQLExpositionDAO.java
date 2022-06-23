@@ -4,16 +4,30 @@ import com.matsak.exhibitionhall.db.dao.ConnectionPool;
 import com.matsak.exhibitionhall.db.dao.DAOFactory;
 import com.matsak.exhibitionhall.db.dao.ExpositionDAO;
 import com.matsak.exhibitionhall.db.entity.Exposition;
+import com.matsak.exhibitionhall.db.entity.FilterSettings;
+import com.matsak.exhibitionhall.db.entity.Theme;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MySQLExpositionDAO implements ExpositionDAO {
-    private static final String GET_EXPOSITIONS_BY_PARAMS = "SELECT e.* FROM expositions e ORDER BY ? LIMIT ?, ?";
+    private static final String GET_EXPOSITIONS = "SELECT e.*, COUNT(et.Exposition_id) as themesMatched FROM expositions e LEFT OUTER JOIN expositions_themes et on e.Id = et.Exposition_id ";
+    private static final String ORDER_PRICE = "ORDER BY e.Price ASC, COUNT(themesMatched) DESC LIMIT ?, ?";
+    private static final String ORDER_DATE = "ORDER BY e.EXP_startDate ASC LIMIT ?, ?";
+    private static final String GROUP_BY_EXP_ID = "GROUP BY e.Id ";
+    private static final String DATE_CORRECTNESS_CHECK = "e.EXP_finalDate >= NOW()";
     private static final String GET_EXPOSITION_BY_ID = "SELECT * FROM expositions WHERE Id=?";
+    private static final String CHECK_FILE_NAME = "SELECT Id FROM expositions WHERE Image=?";
+    private static final String GET_TICKETS_BY_EXP_COUNT = "SELECT EXP.Id, COUNT(T.Num) AS TicketsCount FROM expositions EXP LEFT OUTER JOIN tickets T ON EXP.Id = T.Exposition_id GROUP BY EXP.Id ";
+    private static final String UPDATE_EXPOSITION = "UPDATE expositions SET EXP_name=?, Author=?, EXP_startDate=?," +
+            " EXP_finalDate=?, Price=?, Description=?, Image=? WHERE Id=?";
+    private static final String DELETE_EXPOSITION_SHOWROOMS = "DELETE FROM expositions_showrooms WHERE Exposition_id=?";
+    private static final String SET_EXPOSITION_SHOWROOMS = "INSERT INTO expositions_showrooms(Exposition_id, Showroom_id) VALUES(?, ?)";
+    private static final String GET_EXPOSITIONS_TICKETS = "SELECT e.*, COUNT(t.Num) AS TicketsCount, COUNT(et.Exposition_id) AS themesMatched FROM expositions_themes et RIGHT OUTER JOIN" +
+            " expositions e ON et.Exposition_id = e.Id LEFT OUTER JOIN tickets t ON e.Id=t.Exposition_id ";
+    private static final String ORDER_POPULARITY = "ORDER BY TicketsCount DESC, COUNT(themesMatched) DESC LIMIT ?, ? ";
     Logger logger = LogManager.getLogger(MySQLExpositionDAO.class);
 
     @Override
@@ -32,36 +46,45 @@ public class MySQLExpositionDAO implements ExpositionDAO {
     }
 
     @Override
-    public List<Exposition> getAllExpositions(String orderType, int shift, int rowsAmount) throws SQLException {
+    public List<Exposition> getAllExpositions(String orderType, int shift, int rowsAmount, FilterSettings filters) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        String order = null;
-        switch (orderType){
-            case "DATE":
-            {
-                order = "EXP_startDate";
-                break;
-            }
-            case "PRICE":
-            {
-                order = "Price";
-                break;
-            }
-            case "POPULARITY":
-            {
-                //todo exposition + count of tickets for this exposition, adding another table
-            }
-        }
         try{
             connection = DAOFactory.getInstance().getPooledConnection().getConnection(true);
             if (logger.isDebugEnabled()){
                 logger.debug("Connection: " + connection);
             }
+            String filtersString = filterSearchHandler(filters);
             List<Exposition> expositions = new ArrayList<>();
-            stmt = connection.prepareStatement(GET_EXPOSITIONS_BY_PARAMS);
             int num = 0;
-            stmt.setString(++num, order);
+            switch (orderType){
+                case "DATE":
+                {
+                    String wherePart = "WHERE " + DATE_CORRECTNESS_CHECK + filtersString + " ";
+                    String query = GET_EXPOSITIONS + wherePart + GROUP_BY_EXP_ID + ORDER_DATE;
+                    stmt = connection.prepareStatement(query);
+                    break;
+                }
+                case "PRICE":
+                {
+                    String wherePart = "";
+                    if (filtersString.length() != 0) wherePart = "WHERE " + filtersString + " ";
+                    String query = GET_EXPOSITIONS + wherePart + GROUP_BY_EXP_ID + ORDER_PRICE;
+                    stmt = connection.prepareStatement(query);
+                    break;
+                }
+                case "POPULARITY":
+                {
+                    String wherePart = "";
+                    if (filtersString.length() != 0) wherePart = "WHERE " + filtersString + " ";
+                    String query = GET_EXPOSITIONS_TICKETS + wherePart + GROUP_BY_EXP_ID + ORDER_POPULARITY;
+                    stmt = connection.prepareStatement(query);
+                    break;
+                    //todo exposition + count of tickets for this exposition, adding another table
+                }
+            }
+
             stmt.setInt(++num, shift);
             stmt.setInt(++num, rowsAmount);
             rs = stmt.executeQuery();
@@ -82,9 +105,39 @@ public class MySQLExpositionDAO implements ExpositionDAO {
         }
     }
 
+    private String filterSearchHandler(FilterSettings filters) {
+        StringBuilder result = new StringBuilder();
+        if (filters.getSearch() != null) {
+            result.append("e.EXP_name LIKE '%" + filters.getSearch() + "%' OR e.Author LIKE '%" + filters.getSearch() + "%' ");
+        }
+        if (filters.getStartDate() != null) {
+            if (!result.isEmpty()) result.append("AND ");
+            result.append("e.EXP_startDate >= ").append(filters.getStartDate()).append(" ");
+        }
+        if (filters.getStartDate() != null) {
+            if (!result.isEmpty()) result.append("AND ");
+            result.append("e.EXP_finalDate <= ").append(filters.getStartDate()).append(" ");
+        }
+        if (filters.getThemes().size() != 0) {
+            if (!result.isEmpty()) result.append("AND ");
+            result.append("et.Exposition_id IN (").append(filters.getStartDate()).append(" ");
+            List<Theme> themesList = filters.getThemes();
+            boolean isFirst = true;
+            for (Theme theme : themesList) {
+                if (!isFirst) result.append(",");
+                result.append(theme.getId());
+            }
+            result = result.deleteCharAt(result.length() - 1);
+            result.append(")");
+        }
+        return result.toString();
+    }
+
     private void close(AutoCloseable resource){
         try {
-            resource.close();
+            if (resource != null) {
+                resource.close();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -127,6 +180,110 @@ public class MySQLExpositionDAO implements ExpositionDAO {
         return exposition;
     }
 
+    @Override
+    public boolean isImagePathAvailable(String fileName) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            connection = MySQLDAOFactory.getInstance().getPooledConnection().getConnection(true);
+            stmt = connection.prepareStatement(CHECK_FILE_NAME);
+            stmt.setString(1, fileName);
+            rs = stmt.executeQuery();
+            if (!rs.next()) return true;
+        } catch (SQLException e) {
+            logger.info("Image path checking: SQL Exception ==> " + e.getMessage());
+        } catch (Exception e) {
+            logger.info("DAO Factory (may be #getInstance) exception " + e.getMessage());
+        }finally {
+            //todo interesting with closing. stmt is null after connection closing
+            close(connection);
+            close(stmt);
+            close(rs);
+        }
+        return false;
+    }
+
+    @Override
+    public Map<Integer, Integer> ticketsByExpositions() {
+        Statement stmt = null;
+        ResultSet rs = null;
+        try (Connection connection = DAOFactory.getInstance().getPooledConnection().getConnection(true)) {
+            stmt = connection.createStatement();
+            rs = stmt.executeQuery(GET_TICKETS_BY_EXP_COUNT);
+            //Map<Integer, Integer> = Map<Exposition.Id, Ticket.Num>
+            Map<Integer, Integer> expositionsToTickets = new HashMap<>();
+            while (rs.next()) {
+                int expositionId = rs.getInt("EXP.Id");
+                int ticketsCount = rs.getInt("TicketsCount");
+                expositionsToTickets.put(expositionId, ticketsCount);
+            }
+            return expositionsToTickets;
+        } catch (SQLException e) {
+            logger.info("Failed getting tickets count from DB");
+        } catch (Exception e) {
+            logger.info("DAOFactory #getInstance is not correct.");
+        }
+        finally {
+            close(stmt);
+            close(rs);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean UpdateExposition(Exposition updatedExposition, Set<Integer> selectedShowrooms) {
+        long expositionId = updatedExposition.getId();
+        boolean isCommited = true;
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = DAOFactory.getInstance().getPooledConnection().getConnection(false);
+            int k = 0;
+            stmt = connection.prepareStatement(UPDATE_EXPOSITION);
+            stmt.setString(++k, updatedExposition.getExpName());
+            stmt.setString(++k, updatedExposition.getAuthor());
+            stmt.setTimestamp(++k, updatedExposition.getExpStartDate());
+            stmt.setTimestamp(++k, updatedExposition.getExpFinalDate());
+            stmt.setDouble(++k, updatedExposition.getPrice());
+            stmt.setString(++k, updatedExposition.getDescription());
+            stmt.setString(++k, updatedExposition.getImage());
+            stmt.setLong(++k, updatedExposition.getId());
+            if (stmt.executeUpdate() == 0) {
+                isCommited = false;
+                rollback(connection);
+            }
+            else {
+                stmt = connection.prepareStatement(DELETE_EXPOSITION_SHOWROOMS);
+                stmt.setLong(1, updatedExposition.getId());
+                stmt.executeUpdate();
+
+                stmt = connection.prepareStatement(SET_EXPOSITION_SHOWROOMS);
+                for (Integer showroom : selectedShowrooms) {
+                    stmt.setLong(1, updatedExposition.getId());
+                    stmt.setInt(2, showroom);
+                    if (stmt.executeUpdate() == 0) {
+                        isCommited = false;
+                        rollback(connection);
+                        break;
+                    }
+                }
+            }
+            if (isCommited) {
+                connection.commit();
+                return true;
+            }
+            else return false;
+        } catch (SQLException e) {
+            logger.warn("Exposition was not updated" + e.getMessage());
+            rollback(connection);
+            return false;
+        } finally {
+            close(connection);
+            close(stmt);
+        }
+    }
+
     private Exposition initializeExposition(ResultSet rs) throws SQLException {
         Exposition exposition = new Exposition();
         try {
@@ -137,9 +294,20 @@ public class MySQLExpositionDAO implements ExpositionDAO {
             exposition.setPrice(rs.getDouble("Price"));
             exposition.setAuthor(rs.getString("Author"));
             exposition.setDescription(rs.getString("Description"));
+            exposition.setImage(rs.getString("Image"));
         } catch (SQLException e) {
             logger.error("Failed initializing obtained from DB Exposition. Object is not created.");
         }
         return exposition;
+    }
+
+    private void rollback(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                logger.error("DB Rollback was not made " + e.getMessage());
+            }
+        }
     }
 }

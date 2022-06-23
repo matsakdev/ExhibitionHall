@@ -13,6 +13,7 @@ public class MySQLDAOFactory extends DAOFactory {
     private TicketDAO ticketDAO;
     private ExpositionDAO expositionDAO;
     private ShowroomDAO showroomDAO;
+    private ThemeDAO themeDAO;
 
     @Override
     public void setPooledConnection() {
@@ -41,6 +42,12 @@ public class MySQLDAOFactory extends DAOFactory {
     public ShowroomDAO getShowroomDAO() {
         if (showroomDAO == null) showroomDAO = new MySQLShowroomDAO();
         return showroomDAO;
+    }
+
+    @Override
+    public ThemeDAO getThemeDAO() {
+        if (themeDAO == null) themeDAO = new MySQLThemeDAO();
+        return themeDAO;
     }
 
     @Override

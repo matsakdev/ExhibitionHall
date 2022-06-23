@@ -1,3 +1,7 @@
+* {
+  font-size: 18px;
+}
+
 .items {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -165,6 +169,7 @@
 .datePicker {
   width: 49%;
   display: inline-block;
+  margin-top: 1rem;
 }
 
 .dateLabel {
@@ -173,4 +178,154 @@
 
 .dateInput {
   width: 100%;
+}
+
+.cardImage {
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.imageBox {
+  display: block;
+  width: 100%;
+  height: 25rem;
+}
+
+.priceInput {
+  margin-top: 1rem;
+}
+
+.counterBlock {
+  margin-top: 1rem;
+  margin-left: 40%;
+  width: 50%;
+  justify-items: flex-end;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+}
+.counterBlock button {
+  margin-top: 1rem;
+  width: 25%;
+}
+
+.ticketsCount {
+  font-size: 2rem;
+}
+
+thead {
+  min-width: 100%;
+}
+
+tbody {
+  min-width: 100%;
+}
+
+.clearBasketMessage {
+  display: none;
+}
+
+.modalTable {
+  display: block;
+}
+
+.orderRow {
+  min-height: 8rem;
+  border-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  margin-bottom: 1rem;
+}
+
+.orderImage {
+  width: 12rem;
+  margin-bottom: 1rem;
+  background-size: cover;
+}
+
+.orderSection {
+  -ms-grid-column-align: center;
+      justify-self: center;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-left: 2rem;
+}
+
+.widthContainer {
+  min-height: 100%;
+  padding-top: 2rem;
+}
+
+.orderCount {
+  justify-self: flex-end;
+  margin-left: auto;
+}
+
+.orderContainer {
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+}
+
+.orderTitle {
+  width: 30%;
+}
+
+.orderCount {
+  margin-right: 2rem;
+}
+
+.orderSum {
+  width: 10%;
+}
+
+.emailRadioInput {
+  margin-bottom: 1rem;
+}
+
+#profileLink {
+  cursor: pointer;
+}
+
+.settingsBox {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.filtersBox {
+  margin-left: auto;
+  width: 25%;
+}
+
+.sortingRadioButtons {
+  -ms-grid-column-align: center;
+      justify-self: center;
+}
+
+.searchInput {
+  -ms-flex-line-pack: start;
+      align-content: start;
+  -ms-grid-column-align: center;
+      justify-self: center;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  width: 25%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+}
+
+.input-group {
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+}
+
+.acceptFiltersButton {
+  margin-top: 1rem;
 }

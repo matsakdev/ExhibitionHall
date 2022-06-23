@@ -12,11 +12,11 @@ public class Theme {
         this.id = id;
     }
 
-    public String getTheme_name() {
+    public String getThemeName() {
         return theme_name;
     }
 
-    public void setTheme_name(String theme_name) {
+    public void setThemeName(String theme_name) {
         this.theme_name = theme_name;
     }
 }

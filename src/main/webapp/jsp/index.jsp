@@ -17,24 +17,8 @@
 <tf:header></tf:header>
 <div class="bg-dark">
     <div class="container-fluid col-md-10 bg-primary widthContainer">
-        <div class="sortingRadioButtons">
-            <form action="" method="get">
-                <div class="btn-group" role="group" aria-label="Choose sorting type radio group">
-                    <input type="submit" class="btn-check active" name="sorting" value="date" id="sortingRadio1" autocomplete="off" aria-pressed="true">
-                    <label class="btn
-                    <% if (request.getParameter("sorting") == null || request.getParameter("sorting").equals("date")) out.print("btn-dark");
-                    else out.print("btn-outline-dark");%> " for="sortingRadio1">Date</label>
+        <tf:settings></tf:settings>
 
-                    <input type="submit" class="btn-check" name="sorting" value="price" id="sortingRadio2" autocomplete="off">
-                    <label class="btn <% if ("price".equals(request.getParameter("sorting"))) out.print("btn-dark");
-                    else out.print("btn-outline-dark");%>" for="sortingRadio2">Price</label>
-
-                    <input type="submit" class="btn-check" name="sorting" value="popularity" id="sortingRadio3" autocomplete="off">
-                    <label class="btn <% if ("popularity".equals(request.getParameter("sorting"))) out.print("btn-dark");
-                    else out.print("btn-outline-dark");%>" for="sortingRadio3">Popularity</label>
-                </div>
-            </form>
-        </div>
         <div class="items position-relative">
             <eh:CardsList/>
             <nav aria-label="Page navigation example">
@@ -47,27 +31,14 @@
                 </ul>
             </nav>
         </div>
-        <button type="button" class="btn btn-primary" id="liveToastBtn">Show live toast</button>
-
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <img src="..." class="rounded me-2" alt="...">
-                    <strong class="me-auto">Bootstrap</strong>
-                    <small>11 mins ago</small>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    Hello, world! This is a toast message.
-                </div>
-            </div>
-        </div>
     </div>
 
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="bootstrap/dist/js/bootstrap.bundle.js"></script>
-<script src="scripts/toast.js"></script>
+<script src="scripts/toast.js" charset="utf-8"></script>
+<script src="scripts/buttonsHandler.js" charset="utf-8"></script>
+<script src="scripts/settingsHandler.js" charset="utf-8"></script>
 </body>
 </html>
 

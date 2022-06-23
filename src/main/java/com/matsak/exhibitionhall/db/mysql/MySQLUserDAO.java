@@ -111,7 +111,7 @@ public class MySQLUserDAO implements UserDAO {
     }
 
     @Override
-    public User getByLogin(String userLogin) throws IllegalArgumentException {
+    public User getByLogin(String userLogin){
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -133,18 +133,19 @@ public class MySQLUserDAO implements UserDAO {
             else{
                 throw new IllegalArgumentException();
             }
+            return user;
         } catch (SQLException e) {
             //todo log
-            throw new RuntimeException(e);
+            return null;
         }  catch (IllegalArgumentException e){
-            e.printStackTrace();
+            //todo log
+            return null;
         }
         finally {
             close(con);
             close(stmt);
             close (rs);
         }
-        return user;
     }
 
     @Override

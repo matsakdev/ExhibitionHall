@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CardsGeneratingTag extends SimpleTagSupport {
     private static final Logger logger = LogManager.getLogger(CardsGeneratingTag.class.getName());
@@ -28,7 +29,7 @@ public class CardsGeneratingTag extends SimpleTagSupport {
             List<Exposition> expositionList;
             JspWriter out = getJspContext().getOut();
             try{
-                expositionListObject = request.getAttribute("expositions");
+                expositionListObject = request.getSession().getAttribute("expositions");
                 expositionList = (List<Exposition>)expositionListObject;
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -36,7 +37,9 @@ public class CardsGeneratingTag extends SimpleTagSupport {
             }
             for (Exposition card : expositionList){
                 out.println("<div class=\"card text-center\">\n" +
-                        "                <img src=\"images/knife1.jpg\" class=\"card-img-top\" alt=\"...\">\n" +
+                        "<div class=\"imageBox\">\n" +
+                        "                <img src='images/" + Optional.ofNullable(card.getImage()).orElse("clear.png") +"' class=\"cardImage card-img-top\" alt=\"...\">\n" +
+                        "        </div>" +
                         "                <div class=\"flexContainer\">\n" +
                         "                    <div class=\"card-body itemCard d-flex flex-column\">\n" +
                         "                        <div class=\"rowFlex\">\n" +
@@ -45,8 +48,11 @@ public class CardsGeneratingTag extends SimpleTagSupport {
                         "                        <div class=\"rowFlex\">\n" +
                         "                            <p class=\"card-text\">" + card.getAuthor() + "</p>\n" +
                         "                        </div>\n" +
+                        "                        <div class=\"rowFlex\">\n" +
+                        "                            <p class=\"card-text\">" + card.getDescription() + "</p>\n" +
+                        "                        </div>\n" +
                         "                        <div class=\"rowFlex endCard\">\n" +
-                        "                            <a href=\"#\" class=\"btn btn-primary\">Go somewhere</a>\n" +
+                        "                            <a href='exhibition/" + card.getId() + "' class=\"btn btn-primary\">See details</a>\n" +
                         "                        </div>\n" +
                         "                    </div>\n" +
                         "                </div>\n" +
@@ -54,6 +60,4 @@ public class CardsGeneratingTag extends SimpleTagSupport {
             }
             logger.debug("List of expositions");
         }
-
-
 }

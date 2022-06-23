@@ -2,7 +2,9 @@
 <%@ tag import="com.matsak.exhibitionhall.db.entity.Exposition" %>
 <%@ tag import="java.util.List" %>
 <%@ tag import="java.util.Optional" %>
+<%@ tag import="java.util.Map" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%Map<Integer, Integer> ticketsCount = (Map<Integer, Integer>)session.getAttribute("ticketsCount");%>
 <div class="tableBox col-md-10">
     <table class="table table-striped table-hover caption-top">
         <caption>List of expositions</caption>
@@ -20,13 +22,18 @@
         <%int rows = ((List<Exposition>)request.getAttribute("expositions")).size();
         int pageNum = Integer.parseInt(Optional.ofNullable(request.getParameter("page")).orElse("1"));
         int iterator = rows * (pageNum - 1) + 1;%>
+<%--        <c:set var="ticketsCount" value="${(sessionScope['ticketsCount'] == null || requestScope['ticketsCount'] eq '') ? 'not available' : sessionScope['ticketsCount']}"/>--%>
         <c:forEach var="exposition" items="${expositions}">
             <tr class="adminTableRow">
                 <th scope="row"><%=iterator%></th>
                 <td class="adminTableCell" colspan="1"><c:out value="${exposition.getExpName()}"/></td>
                 <td class="adminTableCell" colspan="1"><c:out value="${exposition.getExpStartDate()}"/></td>
                 <td class="adminTableCell" colspan="1"><c:out value="${exposition.getAuthor()}"/></td>
-                <td class="adminTableCell" colspan="1"><c:out value="many"/></td>
+                <td class="adminTableCell" colspan="1">
+                    <c:set var="expositionId" scope="request" value="${exposition.getId()}"/>
+                    <% Integer id = Integer.parseInt(request.getAttribute("expositionId").toString());
+                        out.print(ticketsCount.get(id));%>
+                </td>
                 <td class="editButtonsColumn">
                     <a href="<%=request.getContextPath()%>/admin/expositions/<c:out value="${exposition.getId()}"/>">
                         <div class="editButton flex align-items-center justify-content-center">

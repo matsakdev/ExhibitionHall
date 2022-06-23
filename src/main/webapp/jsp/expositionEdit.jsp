@@ -1,13 +1,12 @@
 <%@ page import="com.matsak.exhibitionhall.db.entity.User" %>
 <%@ page import="com.matsak.exhibitionhall.db.entity.Exposition" %>
-<%@ page import="java.util.Calendar" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.sql.Timestamp" %>
 <%@ page import="java.time.LocalTime" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="com.matsak.exhibitionhall.db.entity.Showroom" %>
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="eh" uri="/WEB-INF/customtags.tld" %>
 <%@ taglib prefix="tf" tagdir="/WEB-INF/tags" %>
@@ -24,6 +23,14 @@
     DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("HH:mm");
     Timestamp settedStartTime = exposition.getExpStartDate();
     Timestamp settedEndTime = exposition.getExpFinalDate();
+%>
+
+<% List<String> nonValidatedItems = null;
+    Map<String, String> validationFailures = null;
+    if (session.getAttribute("nonValidatedItems") != null) {
+        nonValidatedItems = (List<String>) session.getAttribute("nonValidatedItems");
+        validationFailures = (Map<String, String>) session.getAttribute("validationFailures");
+    }
 %>
 
 <html>
@@ -44,13 +51,24 @@
 </head>
 <body>
 <tf:header></tf:header>
-
+<%
+    if (nonValidatedItems != null && nonValidatedItems.contains("fileMessage")) {
+        out.println("<div style='margin-top:2rem;' class='alert alert-danger' role='alert'>\n" +
+                validationFailures.get("fileMessage") +
+                "</div>");
+    }
+%>
 <div class="container-fluid col-md-12 d-flex flex-column">
     <form action="${sessionScope.get("currentPath")}/update" method="post" enctype="multipart/form-data">
-        <div class="d-flex">
+        <div class="d-flex flex-row">
 
-            <div class="imageHolder col-md-5">
-                <div class="uploadBox">
+            <div class="imageHolder col-md-5" id="imageHolder"
+                    <% if (exposition.getImage() != null) {
+                        out.println("style=\"background-size: cover; background-image: url('../../images/" + exposition.getImage() + "')\"");
+                    } else {
+                        out.println("style=\"background-size: cover; background-image: url('../../images/clear.jpg')\"");
+                    }%> >
+                <div class="uploadBox" id="uploadBox">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-upload"
                          viewBox="0 0 16 16">
@@ -65,22 +83,54 @@
                 </div>
             </div>
             <div class="infoInputs col-md-5">
+                <%
+                    if (nonValidatedItems != null && nonValidatedItems.contains("expTitleMessage")) {
+                        out.println("<div class='alert alert-danger' role='alert'>\n" +
+                                validationFailures.get("expTitleMessage") +
+                                "</div>");
+                    }
+                %>
                 <label for="expositionName" class="form-label">Exposition Title:</label>
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="expositionName" aria-describedby="expositionNameLabel"
-                           placeholder="Title" name="expTitle" value="${exposition.getExpName()}">
-                </div>
+                           placeholder="Title" name="expTitle"
+                    <c:choose>
+                    <c:when test='${pageContext.getAttribute("titleInput") != null}'>
+                           value="${pageContext.getAttribute("titleInput")}">
 
+                    </c:when>
+                    <c:otherwise>
+                        value="${exposition.getExpName()}">
+                    </c:otherwise>
+                    </c:choose>
+                </div>
+                <%
+                    if (nonValidatedItems != null && nonValidatedItems.contains("expAuthorMessage")) {
+                        out.println("<div class='alert alert-danger' role='alert'>\n" +
+                                validationFailures.get("expAuthorMessage") +
+                                "</div>");
+                    }
+                %>
                 <label for="expositionAuthor" class="form-label">Author of the Exposition</label>
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="expositionAuthor" aria-describedby="expositionAuthor"
-                           placeholder="Author" name="expAuthor" value="${exposition.getAuthor()}">
+                           placeholder="Author" name="expAuthor"
+                    <c:choose>
+                    <c:when test='${pageContext.getAttribute("authorInput") != null}'>
+                           value="${pageContext.getAttribute("authorInput")}">
+                    </c:when>
+
+                    <c:otherwise>
+                        value="${exposition.getAuthor()}">
+                    </c:otherwise>
+                    </c:choose>
                 </div>
 
                 <div class="d-block">
                     <div class="datePicker">
                         <label for="startDate" class="dateLabel">Exposition opening date</label>
-                        <input class="dateInput" type="date" id="startDate" name="trip-start" placeholder="Start date"
+                        <input class="dateInput" name="startDate" type="date" id="startDate" name="trip-start"
+                               placeholder="Start date"
                             <%
                            LocalDate startDate = settedStartTime.toLocalDateTime().toLocalDate();
                            out.print("value='" + startDate.format(formattedDate) + "'");
@@ -98,7 +148,7 @@
 
                     <div class="datePicker">
                         <small>Exposition opens at</small>
-                        <input type="time" id="startTime" name="appt"
+                        <input type="time" id="startTime" name="startTime"
                             <%
                            LocalTime startTime = settedStartTime.toLocalDateTime().toLocalTime();
                            out.print("value='" + startTime.format(formattedTime) + "'");
@@ -117,7 +167,7 @@
                 <div class="d-block">
                     <div class="datePicker">
                         <label for="endDate" class="dateLabel">Exposition closing date</label>
-                        <input class="dateInput" type="date" id="endDate" name="trip-start" placeholder="End date"
+                        <input class="dateInput" type="date" id="endDate" name="endDate" placeholder="End date"
                             <%
                            LocalDate endDate = settedEndTime.toLocalDateTime().toLocalDate();
                            out.print("value='" + endDate.format(formattedDate) + "'");
@@ -134,7 +184,7 @@
                     </div>
                     <div class="datePicker">
                         <small>Exposition closes at</small>
-                        <input type="time" id="endTime" name="appt"
+                        <input type="time" id="endTime" name="endTime"
                             <%
                            LocalTime endTime = settedEndTime.toLocalDateTime().toLocalTime();
                            out.print("value='" + endTime.format(formattedTime) + "'");
@@ -150,16 +200,41 @@
                                required>
                     </div>
                 </div>
-
+                <%
+                    if (nonValidatedItems != null && nonValidatedItems.contains("priceMessage")) {
+                        out.println("<div style='margin-top: 1rem' class='alert alert-danger' role='alert'>\n" +
+                                validationFailures.get("priceMessage") +
+                                "</div>");
+                    }
+                %>
+                <div class="form-outline col-md-3 priceInput">
+                    <label class="form-label" for="priceInput">Price</label>
+                    <input type="number" id="priceInput" name="priceInput" class="form-control" step="5"/>
+                </div>
             </div>
         </div>
         <div class="d-flex">
             <div class="roomsList col-md-5">
                 <div class="list-group">
+                    <% List<String> selectedIds = new ArrayList<>();
+                        if (request.getSession().getAttribute("showroomInput") != null) {
+                        String[] selectedShowrooms = request.getSession().getAttribute("showroomInput").toString().split(";");
+                        selectedIds = new ArrayList<>(Arrays.stream(selectedShowrooms).toList());
+
+                    }%>
+
+
                     <c:forEach var="showroom" items="${showroomsList}">
 
                         <label class="list-group-item">
-                            <input class="form-check-input me-1" type="checkbox" value="">
+                            <input class="form-check-input me-1" type="checkbox" name="showroom" value=
+                                <c:out
+                                        value="${showroom.getId()}"/>
+                                    <% if (selectedIds != null) {
+                                     Showroom currentSR = (Showroom) pageContext.getAttribute("showroom");
+                                      if (selectedIds.contains(String.valueOf(currentSR.getId()))) out.print("checked"); }
+                                     %>
+                            >
                             <c:out value="${showroom.getSrName()} (${showroom.getArea()} sq. m)"/>
                         </label>
 
@@ -168,9 +243,22 @@
             </div>
 
             <div class="descriptionArea col-md-5">
+                <%
+                    if (nonValidatedItems != null && nonValidatedItems.contains("descriptionMessage")) {
+                        out.println("<div class='alert alert-danger' role='alert'>\n" +
+                                validationFailures.get("descriptionMessage") +
+                                "</div>");
+                    }
+                %>
                 <div class="input-group">
                     <span class="input-group-text">Description</span>
-                    <textarea class="form-control" aria-label="Description"></textarea>
+                    <textarea class="form-control" aria-label="Description" name="description">
+                         <c:choose>
+                             <c:when test='${pageContext.getAttribute("descriptionInput") != null}'>
+                                 ${pageContext.getAttribute("descriptionInput")}">
+                             </c:when>
+                         </c:choose>
+                    </textarea>
                 </div>
             </div>
         </div>
@@ -179,5 +267,10 @@
 
 </div>
 </body>
-<script type="text/javascript" src="<%=request.getContextPath()%>/scripts/expositionEdit.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/scripts/expositionEdit.js" charset="utf-8"></script>
+<%session.setAttribute("currentExpositionId", ((Exposition) request.getAttribute("exposition")).getId());%>
+<c:remove var="descriptionInput" scope="session"/>
+<c:remove var="nonValidatedItems" scope="session"/>
+<c:remove var="authorInput" scope="session"/>
+<c:remove var="titleInput" scope="session"/>
 </html>

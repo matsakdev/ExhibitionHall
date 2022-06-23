@@ -34,13 +34,20 @@ public class AccessFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
         //
-        try {
-            req.getSession().setAttribute("currentUser", DAOFactory.getInstance().getUserDAO().getByLogin("admin01"));
-            req.getSession().setAttribute("userRole", "administrator");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // todo for debugging
+//        try {
+//            req.getSession().setAttribute("currentUser", DAOFactory.getInstance().getUserDAO().getByLogin("admin01"));
+//            req.getSession().setAttribute("userRole", "administrator");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        try {
+//            req.getSession().setAttribute("currentUser", DAOFactory.getInstance().getUserDAO().getByLogin("minicat250"));
+//            req.getSession().setAttribute("userRole", "qwerty0101");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        // todo for debugging
         try{
             String path = req.getRequestURI().substring(req.getContextPath().length()).toLowerCase(Locale.ROOT);
             if (path.trim().equals("/")) chain.doFilter(request, response);
@@ -63,7 +70,5 @@ public class AccessFilter implements Filter {
         } catch (Exception e){
             e.printStackTrace();
         }
-
-
     }
 }

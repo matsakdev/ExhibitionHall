@@ -1,3 +1,6 @@
+let imageHolder = document.getElementById("imageHolder");
+let image = document.getElementById("uploadImageInput");
+
 window.onload = function() {
      if (!document.getElementById("startDate").readOnly) {
          setMinDate("startDate");
@@ -21,4 +24,22 @@ function setMinDate(field){
     let day = zero_first_format(currentDate.getDate());
     //yyyy-MM-dd
     document.getElementById(field).min = year + "-" + month + "-" + day;
+}
+
+function readURL(input) {
+    console.log(input);
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+        console.log(reader);
+        reader.onload = function (e) {
+            imageHolder.style.backgroundImage = 'url(' + (e.target.result) + ")";
+            console.log(imageHolder.style.backgroundImage);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+image.onchange = function() {
+    console.log(image);
+    readURL(this);
 }

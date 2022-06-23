@@ -17,7 +17,13 @@ public class LoginCommand extends FrontCommand{
     public void process() throws ServletException, IOException {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
+        if (request.getSession().getAttribute("jsonRequest") != null) {
+            request.getSession().setAttribute("jsonRequest", null);
+            response.getOutputStream().println("need to login");
+            return;
+        }
         try {
+            System.out.println(login + " " + password);
             logger.debug("User now in logging - login: " + login + "; password: " + password);
             User user = DAOFactory.getInstance().getUserDAO().getByLogin(login);
             if (user != null && user.getUserPassword().equals(hashPassword(password))){
@@ -34,7 +40,16 @@ public class LoginCommand extends FrontCommand{
                     response.sendRedirect("admin");
                     return;
                 }
-                response.sendRedirect("controller");
+                response.sendRedirect(request.getContextPath() + "/main");
+            }
+            else {
+                if (request.getAttribute("authNeed") != null && (boolean) request.getAttribute("authNeed")) {
+                    request.getSession().setAttribute("loginError", "Auth needed");
+                }
+                else request.getSession().setAttribute("loginError", "Incorrect info");
+
+                System.out.println(request.getSession().getAttribute("loginError").toString());
+                response.sendRedirect(request.getContextPath() + "/main");
             }
 
         } catch (Exception e) {
@@ -44,9 +59,7 @@ public class LoginCommand extends FrontCommand{
             }
             else request.getSession().setAttribute("loginError", "Incorrect info");
 
-            FrontCommand command = new GenerateMainPageCommand();
-            command.init(request.getServletContext(), request, response);
-            command.process();
+            response.sendRedirect(request.getContextPath() + "/main");
         }
     }
 

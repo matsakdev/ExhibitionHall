@@ -13,4 +13,9 @@
         <tag-class>com.matsak.exhibitionhall.tagHandlers.CardsGeneratingTag</tag-class>
         <body-content>empty</body-content>
     </tag>
+    <tag>
+        <name>ThemesList</name>
+        <tag-class>com.matsak.exhibitionhall.tagHandlers.ThemesListTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
 </taglib>

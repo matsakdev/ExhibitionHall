@@ -20,6 +20,11 @@ public class Dispatcher {
         commands.put("profile", new ProfileCommand());
         commands.put("expositions", new EditingFormLoadingCommand());
         commands.put("updateExposition", new UpdateExpositionCommand());
+        commands.put("exhibitionDetails", new ExhibitionDetailsCommand());
+        commands.put("order", new OrderCommand());
+        commands.put("makeorder", new MakeOrderCommand());
+        commands.put("profileSettings", new ProfileSettingsCommand());
+        commands.put("logout", new LogoutCommand());
     }
 
     public static FrontCommand dispatch(HttpServletRequest request){
@@ -30,7 +35,17 @@ public class Dispatcher {
         if (path.startsWith("/main")) {
             return commands.get("main");
         }
-        if (path.startsWith("/admin")) {
+        else if (path.startsWith("/order")) {
+            return commands.get("order");
+        }
+        else if (path.startsWith("/profile")) {
+            path = path.substring("/profile".length());
+            if (path.startsWith("/settings")) {
+                commands.get("profileSettings");
+            }
+            return commands.get("profile");
+        }
+        else if (path.startsWith("/admin")) {
             String regex = "(\\/admin\\/expositions\\/[0-9]+)";
             if (path.matches(regex + "$")) {
                 return commands.get("expositions");
@@ -38,14 +53,28 @@ public class Dispatcher {
                 return commands.get("updateExposition");
             }
             return commands.get("admin");
-        } else if (path.startsWith("/login")) {
+        }
+        else if (path.startsWith("/login")) {
             return commands.get("login");
+        }
+        else if (path.startsWith("/logout")) {
+            return commands.get("logout");
         }
         else if (path.startsWith("/register")) {
             return commands.get("register");
         }
         else if (path.startsWith("/profile")){
             return commands.get("profile");
+        }
+        else if (path.startsWith("/makeorder")){
+            return commands.get("makeorder");
+        }
+        else if (path.startsWith("/exhibition")){
+            String regex = "(/exhibition\\/[0-9]+)";
+            if (path.matches(regex + "$")) {
+                return commands.get("exhibitionDetails");
+            }
+            return commands.get("main");
         }
         else return commands.get("error");
     }

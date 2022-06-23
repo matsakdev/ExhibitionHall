@@ -1,3 +1,8 @@
+* {
+  font-size: 18px;
+}
+
+
 .items{
   display: flex;
   flex-wrap: wrap;
@@ -144,6 +149,7 @@ height: 100%;
 .datePicker {
   width: 49%;
   display: inline-block;
+  margin-top: 1rem;
 }
 
 .dateLabel {
@@ -152,4 +158,136 @@ height: 100%;
 
 .dateInput {
   width: 100%;
+}
+
+.cardImage {
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageBox {
+  display: block;
+  width: 100%;
+  height: 25rem;
+}
+
+.priceInput {
+  margin-top: 1rem;
+}
+
+.counterBlock {
+  margin-top: 1rem;
+  margin-left: 40%;
+  width: 50%;
+  justify-items: flex-end;
+  align-items: flex-end;
+  button {
+    margin-top: 1rem;
+    width: 25%;
+  }
+}
+
+.ticketsCount {
+  font-size: 2rem;
+}
+
+thead{
+  min-width: 100%;
+}
+tbody{
+  min-width: 100%;
+}
+
+.clearBasketMessage {
+  display: none;
+}
+
+.modalTable {
+  display: block;
+}
+
+.orderRow {
+  min-height: 8rem;
+  border-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  margin-bottom: 1rem;
+}
+
+.orderImage {
+  width: 12rem;
+  margin-bottom: 1rem;
+  background-size: cover;
+}
+
+.orderSection {
+  justify-self: center;
+  align-self: center;
+  margin-left: 2rem;
+}
+
+.widthContainer {
+  min-height: 100%;
+  padding-top: 2rem;
+}
+
+.orderCount {
+  justify-self: flex-end;
+  margin-left: auto;
+}
+
+.orderContainer {
+  flex-basis: 100%;
+}
+
+.orderTitle {
+  width: 30%;
+}
+
+.orderCount {
+  //width: 10%;
+  margin-right: 2rem;
+}
+
+.orderSum {
+  width: 10%;
+}
+
+.emailRadioInput {
+  margin-bottom: 1rem;
+}
+
+#profileLink {
+  cursor: pointer;
+}
+
+.settingsBox {
+  flex-direction: row;
+
+}
+
+.filtersBox {
+  margin-left: auto;
+  width: 25%;
+}
+
+.sortingRadioButtons {
+  justify-self: center;
+}
+
+.searchInput {
+  align-content: start;
+  justify-self: center;
+  flex-wrap: nowrap;
+  width: 25%;
+  display: flex;
+  flex-grow: 0;
+}
+
+.input-group {
+  flex-wrap: nowrap;
+}
+
+.acceptFiltersButton {
+  margin-top: 1rem;
 }

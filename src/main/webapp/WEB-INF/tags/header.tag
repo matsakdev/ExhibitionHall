@@ -12,34 +12,36 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 navButtons">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/home">Home</a>
+                        <a class="nav-link active" aria-current="page" id="profileLink" href="<%=request.getContextPath()%>/main">Home</a>
                     </li>
                     <%if ("administrator".equals(request.getSession().getAttribute("userRole"))) out.println("<li class=\"nav-item\">\n" +
-                            "                        <a class=\"nav-link\" href=\"admin\">Admin tools</a>\n" +
+                            "                        <a class=\"nav-link\" href='\" + request.getContextPath() + \"/admin'>Admin tools</a>\n" +
                             "                    </li>");
                     else out.println("<li class=\"nav-item\">\n" +
-                                "                        <a class=\"nav-link\" href=\"profile\">Profile</a>\n" +
+                                "                        <a class=\"nav-link\" id='profile' " +
+//                                "href='" + request.getContextPath() + "/profile'" +
+                                ">Profile</a>\n" +
                                 "                    </li>");%>
-                    <li class="nav-item">
-                        <a class="nav-link" href="?command=admin">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                    </li>
+<%--                    <li class="nav-item">--%>
+<%--                        <a class="nav-link" href="?command=admin">Link</a>--%>
+<%--                    </li>--%>
+<%--                    <li class="nav-item dropdown">--%>
+<%--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"--%>
+<%--                           data-bs-toggle="dropdown" aria-expanded="false">--%>
+<%--                            Dropdown--%>
+<%--                        </a>--%>
+<%--                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">--%>
+<%--                            <li><a class="dropdown-item" href="#">Action</a></li>--%>
+<%--                            <li><a class="dropdown-item" href="#">Another action</a></li>--%>
+<%--                            <li>--%>
+<%--                                <hr class="dropdown-divider">--%>
+<%--                            </li>--%>
+<%--                            <li><a class="dropdown-item" href="#">Something else here</a></li>--%>
+<%--                        </ul>--%>
+<%--                    </li>--%>
+<%--                    <li class="nav-item">--%>
+<%--                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>--%>
+<%--                    </li>--%>
                 </ul>
 
                 <div class="languageRadioButton">
@@ -53,39 +55,18 @@
                 </div>
                 <c:choose>
                 <c:when test="${sessionScope.currentUser != null}">
-                    <button type="button" class="btn btn-outline-success me-2 loginButton" data-bs-toggle="modalLogout" data-bs-target="#logoutModal" id="modalButton">
-                        ${sessionScope.currentUser.getUserLogin()}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                             class="bi bi-door-open" viewBox="0 0 16 16">
-                            <path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/>
-                            <path d="M10.828.122A.5.5 0 0 1 11 .5V1h.5A1.5 1.5 0 0 1 13 2.5V15h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117zM11.5 2H11v13h1V2.5a.5.5 0 0 0-.5-.5zM4 1.934V15h6V1.077l-6 .857z"/>
-                        </svg>
-                    </button>
-                    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="logoutModalLabel">Logout</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <h3>Do you want to logout?</h3>
-                                    <form action="#">
-                                        <input type="submit" value="No" class="btn-outline-danger">
-                                    </form>
-                                    <form action="controller">
-                                        <input type="submit" value="Yes" class="btn-outline-danger">
-                                        <input type="hidden" name="command" value="logout">
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <form action="<%=request.getContextPath()%>/logout" onsubmit="return confirm('Do you really want to logout?');" class="d-block">
+                        <button type="submit"
+                                class="btn btn-outline-success me-2 loginButton" data-bs-toggle="modalLogout"
+                                data-bs-target="#logoutModal" id="modalButton">
+                                ${sessionScope.currentUser.getUserLogin()}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-door-open" viewBox="0 0 16 16">
+                                <path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/>
+                                <path d="M10.828.122A.5.5 0 0 1 11 .5V1h.5A1.5 1.5 0 0 1 13 2.5V15h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117zM11.5 2H11v13h1V2.5a.5.5 0 0 0-.5-.5zM4 1.934V15h6V1.077l-6 .857z"/>
+                            </svg>
+                        </button>
+                    </form>
                 </c:when>
 <%--                <%if (request.getSession().getAttribute("currentUser") != null)--%>
 <%--                    out.println("<div>You're logged as" + ((User)request.getSession().getAttribute("currentUser")).getUserLogin() + "</div>");%>--%>
@@ -102,7 +83,7 @@
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">Login/Register</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>

@@ -35,6 +35,18 @@
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>com.matsak.exhibitionhall.filters.EncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+
 
     <servlet-mapping>
         <servlet-name>RegistrationServlet</servlet-name>
@@ -43,9 +55,14 @@
     <servlet-mapping>
         <servlet-name>Controller</servlet-name>
         <url-pattern>/main</url-pattern>
+        <url-pattern>/exhibition/*</url-pattern>
         <url-pattern>/admin</url-pattern>
         <url-pattern>/admin/expositions/*</url-pattern>
         <url-pattern>/login</url-pattern>
+        <url-pattern>/logout</url-pattern>
+        <url-pattern>/profile</url-pattern>
+        <url-pattern>/order</url-pattern>
+        <url-pattern>/makeorder</url-pattern>
     </servlet-mapping>
 
 </web-app>
