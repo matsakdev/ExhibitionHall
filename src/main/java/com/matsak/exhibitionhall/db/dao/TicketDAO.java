@@ -13,4 +13,6 @@ public interface TicketDAO{
     List<Ticket> getByUser(String userLogin);
     List<Ticket> getAllTickets();
     boolean createTickets(Map<Exposition, Integer> expositionsCounts, User user, String email);
+
+    List<Ticket> getTicketsByUser(String userLogin);
 }

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 public class MySQLConnectionPool implements ConnectionPool {
     private static MySQLConnectionPool instance = null;
-    private static DataSource connectionPool = null;
+    public static DataSource connectionPool = null;
 
     private MySQLConnectionPool(){
         //private constructor for Singleton
@@ -37,6 +37,7 @@ public class MySQLConnectionPool implements ConnectionPool {
 
     public Connection getConnection(boolean autocommit){
         try{
+            if (connectionPool == null) getPooledConnectionDataSource();
             Connection con = connectionPool.getConnection();
             con.setAutoCommit(autocommit);
             return con;

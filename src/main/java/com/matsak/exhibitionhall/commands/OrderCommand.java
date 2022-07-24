@@ -25,6 +25,11 @@ public class OrderCommand extends FrontCommand {
         Map<Long, Integer> exhibitionIDs = new HashMap<>();
         try {
             while ((result = br.readLine()) != null) {
+                if (result.equals("null")) {
+                    request.getSession().setAttribute("redirectedForJson", false);
+                    response.sendRedirect(request.getContextPath() + "/profile");
+                    return;
+                }
                 String changedOutput = result.replace("\\n", "").replace("[", "").replace("]", "").replace("\\", "").replace("  ", " ");
 //                changedOutput = changedOutput.substring(1, changedOutput.length()-1);
                 exhibitionsCountsJSON = changedOutput.split("(\\,(?=\\{))");

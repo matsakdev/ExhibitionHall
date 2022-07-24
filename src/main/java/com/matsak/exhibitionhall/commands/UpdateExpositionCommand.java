@@ -34,15 +34,16 @@ public class UpdateExpositionCommand extends FrontCommand {
     static Map<String, String> validationFailures = new HashMap<>();
     static {
         validationFailures.put("fileMessage", "File was not loaded properly");
-        validationFailures.put("expTitleMessage", "expTitleMessage");
-        validationFailures.put("expAuthorMessage", "expAuthorMessage");
-        validationFailures.put("startDateMessage", "startDateMessage");
-        validationFailures.put("startTimeMessage", "startTimeMessage");
-        validationFailures.put("endDateMessage", "endDateMessage");
-        validationFailures.put("endTimeMessage", "endTimeMessage");
-        validationFailures.put("descriptionMessage", "descriptionMessage");
-        validationFailures.put("showroomMessage", "showroomMessage");
-        validationFailures.put("priceMessage", "priceMessage");
+        validationFailures.put("expTitleMessage", "Title was not entered correctly.");
+        validationFailures.put("expAuthorMessage", "Author was not entered correctly.");
+        validationFailures.put("startDateMessage", "Set the correct date of beginning");
+        validationFailures.put("startTimeMessage", "Set the correct time of beginning");
+        validationFailures.put("endDateMessage", "Set the correct date of the ending");
+        validationFailures.put("endTimeMessage", "Set the correct time of the ending");
+        validationFailures.put("descriptionMessage", "Please, type the description. It must be less than 500 symbols.");
+        validationFailures.put("showroomMessage", "Please, select available showrooms");
+        validationFailures.put("priceMessage", "Please, set the price of the ticket");
+        validationFailures.put("fileWarning", "Please, reload the image");
     }
     //list for not validated fields
     List<String> failedValidation = new ArrayList<>();
@@ -64,12 +65,17 @@ public class UpdateExpositionCommand extends FrontCommand {
     long expositionId;
     @Override
     public void process() throws ServletException, IOException {
+        boolean isCreating = false;
         try {
-            expositionId = (long) request.getSession().getAttribute("currentExpositionId");
+            if (request.getSession().getAttribute("currentExpositionId") == null) isCreating = true;
+            else expositionId = (long) request.getSession().getAttribute("currentExpositionId");
         }catch (ClassCastException e) {
             logger.error("Exposition ID was not setted correctly");
         }
         filePart = request.getPart("file");
+        if (filePart == null && request.getSession().getAttribute("fileInput") != null) {
+            filePart = (Part)request.getSession().getAttribute("fileInput");
+        }
         expName = request.getParameter("expTitle");
         expAuthor = request.getParameter("expAuthor");
         expStartDate = request.getParameter("startDate");
@@ -85,16 +91,18 @@ public class UpdateExpositionCommand extends FrontCommand {
             + "showrooms ==> " + Arrays.toString(showrooms) + " description ==> " + description);
         }
 
-
-        if (!validation()) {
+        boolean dateCorrectness = true;
+        correctedStartDate = dateCorrection(expStartDate, expStartTime);
+        correctedEndDate = dateCorrection(expEndDate, expEndTime);
+        if (correctedStartDate.compareTo(correctedEndDate) > 0) dateCorrectness = false;
+            if (!validation() || !dateCorrectness) {
             insertFieldsInformation();
             setErrorMessages();
             response.sendRedirect(request.getContextPath() + "/admin/expositions/" + expositionId);
             return;
         }
 
-            correctedStartDate = dateCorrection(expStartDate, expStartTime);
-            correctedEndDate = dateCorrection(expEndDate, expEndTime);
+
             checkShowroomsAvailability();
 
         String fileName =
@@ -123,7 +131,7 @@ public class UpdateExpositionCommand extends FrontCommand {
             }
             logger.debug("fileName ==> " + fileName + " title ==> " + expName + " author ==> " + expAuthor);
 
-            Exposition exposition = (Exposition) request.getSession().getAttribute("currentExposition");
+//            Exposition exposition = (Exposition) request.getSession().getAttribute("currentExposition");
 
             InputStream fileContent = filePart.getInputStream();
             Files.copy(fileContent,
@@ -136,26 +144,50 @@ public class UpdateExpositionCommand extends FrontCommand {
             response.sendRedirect(request.getContextPath() + "/admin/expositions/" + expositionId);
         }
 
-        //updating DB
-
-        try {
-            Exposition updatedExposition = new Exposition();
-            updatedExposition.setId(expositionId);
-            updatedExposition.setExpName(expName);
-            updatedExposition.setAuthor(expAuthor);
-            updatedExposition.setDescription(description);
-            updatedExposition.setExpStartDate(correctedStartDate);
-            updatedExposition.setExpFinalDate(correctedEndDate);
-            updatedExposition.setImage(fileName);
-            updatedExposition.setPrice(price);
-            boolean isUpdated = DAOFactory.getInstance().getExpositionDAO().UpdateExposition(updatedExposition, selectedShowroomsId);
-            if (isUpdated) {
-                response.sendRedirect(request.getContextPath() + "/admin");
-                return;
+        if (isCreating) {
+            try {
+                Exposition newExposition = new Exposition();
+                newExposition.setExpName(expName);
+                newExposition.setAuthor(expAuthor);
+                newExposition.setDescription(description);
+                newExposition.setExpStartDate(correctedStartDate);
+                newExposition.setExpFinalDate(correctedEndDate);
+                newExposition.setImage(fileName);
+                newExposition.setPrice(price);
+                boolean isCreated = DAOFactory.getInstance().getExpositionDAO().createExposition(newExposition, selectedShowroomsId);
+                if (isCreated) {
+                    response.sendRedirect(request.getContextPath() + "/admin");
+                    return;
+                }
+                else {
+                    logger.error("Exposition cannot be created");
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                e.printStackTrace();
             }
-        } catch(Exception e) {
-            logger.error(e.getMessage());
-            e.printStackTrace();
+        }
+        //updating DB
+        else {
+            try {
+                Exposition updatedExposition = new Exposition();
+                updatedExposition.setId(expositionId);
+                updatedExposition.setExpName(expName);
+                updatedExposition.setAuthor(expAuthor);
+                updatedExposition.setDescription(description);
+                updatedExposition.setExpStartDate(correctedStartDate);
+                updatedExposition.setExpFinalDate(correctedEndDate);
+                updatedExposition.setImage(fileName);
+                updatedExposition.setPrice(price);
+                boolean isUpdated = DAOFactory.getInstance().getExpositionDAO().updateExposition(updatedExposition, selectedShowroomsId);
+                if (isUpdated) {
+                    response.sendRedirect(request.getContextPath() + "/admin");
+                    return;
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                e.printStackTrace();
+            }
         }
 
 
@@ -204,6 +236,10 @@ public class UpdateExpositionCommand extends FrontCommand {
 
     private void setErrorMessages() {
         HttpSession session = request.getSession();
+        if (!failedValidation.contains("fileMessage")) {
+            failedValidation.add("fileWarning");
+        }
+        session.setAttribute("fileInput", filePart);
         session.setAttribute("nonValidatedItems", failedValidation);
         session.setAttribute("validationFailures", validationFailures);
     }
@@ -216,7 +252,7 @@ public class UpdateExpositionCommand extends FrontCommand {
         description = description.trim();
         if (priceString != null)
             try {
-                price = Long.parseLong(priceString);
+                price = Double.parseDouble(priceString);
             } catch (NumberFormatException e) {
                 failedValidation.add("priceMessage");
                 logger.warn(e.getMessage());
@@ -237,7 +273,7 @@ public class UpdateExpositionCommand extends FrontCommand {
         boolean isFormValidated = true;
         //file
         if (filePart.getSubmittedFileName() == null || filePart.getSubmittedFileName().trim().equals("")) {
-            failedValidation.add("fileMessage");
+                failedValidation.add("fileMessage");
         }
         //title
         if (expName == null || expName.length() > 60 || expName.length() == 0) {

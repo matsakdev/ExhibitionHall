@@ -26,6 +26,11 @@ public class ThemesListTag extends SimpleTagSupport {
         Object themesListObject;
         List<Theme> themesList = null;
         JspWriter out = getJspContext().getOut();
+        Object selectedThemesObject = request.getSession().getAttribute("themesFilter");
+        String[] selectedThemes = null;
+        if (selectedThemesObject != null) {
+            selectedThemes = (String[]) selectedThemesObject;
+        }
         try{
             themesListObject = request.getSession().getAttribute("themes");
             themesList = (List<Theme>)themesListObject;
@@ -33,7 +38,13 @@ public class ThemesListTag extends SimpleTagSupport {
             logger.warn("Cannot get themes from session scope " + e.getMessage());
         }
         for (Theme theme : themesList) {
-            out.println("<option value=" + theme.getId() + ">" + theme.getThemeName() + "</option>");
+            boolean isSelected = false;
+            if (selectedThemes != null) {
+                for (String selectedTheme : selectedThemes) {
+                    if (selectedTheme.equals(String.valueOf(theme.getId()))) isSelected = true;
+                }
+            }
+            out.println("<option value=" + theme.getId() + (isSelected ? " selected " : " ") + ">" + theme.getThemeName() + "</option>");
         }
     }
 }

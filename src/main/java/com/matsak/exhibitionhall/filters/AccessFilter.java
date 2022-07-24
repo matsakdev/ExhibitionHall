@@ -33,7 +33,7 @@ public class AccessFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
-        //
+
 //        try {
 //            req.getSession().setAttribute("currentUser", DAOFactory.getInstance().getUserDAO().getByLogin("admin01"));
 //            req.getSession().setAttribute("userRole", "administrator");

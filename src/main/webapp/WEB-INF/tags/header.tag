@@ -1,58 +1,42 @@
+<%--libs--%>
 <%@ tag import="com.matsak.exhibitionhall.db.entity.User" %>
+<%@ tag import="java.util.ResourceBundle" %>
+<%@ tag import="java.util.Locale" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<%--lang settings--%>
+<fmt:setLocale value="${sessionScope.lang}" />
+<fmt:setBundle basename="header"/>
+<%ResourceBundle header = ResourceBundle.getBundle("header", new Locale(request.getSession().getAttribute("lang").toString()));%>
+
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-<%--            <a class="navbar-brand" href="#">Navbar</a>--%>
-<%--            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"--%>
-<%--                    data-bs-target="#navbarSupportedContent"--%>
-<%--                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">--%>
-<%--                <span class="navbar-toggler-icon"></span>--%>
-<%--            </button>--%>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 navButtons">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" id="profileLink" href="<%=request.getContextPath()%>/main">Home</a>
+                        <a class="nav-link active" aria-current="page" id="profileLink" href="<%=request.getContextPath()%>/main"><fmt:message key="home"/></a>
                     </li>
-                    <%if ("administrator".equals(request.getSession().getAttribute("userRole"))) out.println("<li class=\"nav-item\">\n" +
-                            "                        <a class=\"nav-link\" href='\" + request.getContextPath() + \"/admin'>Admin tools</a>\n" +
+                    <%if ("administrator".equals(request.getSession().getAttribute("userRole"))) out.println("<li class=\"nav-item profileButton\">\n" +
+                            "                        <a class=\"nav-link\" href='" + request.getContextPath() + "/admin'>" + header.getString("admin") + "</a>\n" +
                             "                    </li>");
-                    else out.println("<li class=\"nav-item\">\n" +
+                    else out.println("<li class=\"nav-item profileButton\">\n" +
                                 "                        <a class=\"nav-link\" id='profile' " +
-//                                "href='" + request.getContextPath() + "/profile'" +
-                                ">Profile</a>\n" +
+                                ">" + header.getString("profile") + "</a>\n" +
                                 "                    </li>");%>
-<%--                    <li class="nav-item">--%>
-<%--                        <a class="nav-link" href="?command=admin">Link</a>--%>
-<%--                    </li>--%>
-<%--                    <li class="nav-item dropdown">--%>
-<%--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"--%>
-<%--                           data-bs-toggle="dropdown" aria-expanded="false">--%>
-<%--                            Dropdown--%>
-<%--                        </a>--%>
-<%--                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">--%>
-<%--                            <li><a class="dropdown-item" href="#">Action</a></li>--%>
-<%--                            <li><a class="dropdown-item" href="#">Another action</a></li>--%>
-<%--                            <li>--%>
-<%--                                <hr class="dropdown-divider">--%>
-<%--                            </li>--%>
-<%--                            <li><a class="dropdown-item" href="#">Something else here</a></li>--%>
-<%--                        </ul>--%>
-<%--                    </li>--%>
-<%--                    <li class="nav-item">--%>
-<%--                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>--%>
-<%--                    </li>--%>
                 </ul>
+                <form action="<%=request.getContextPath()%>/language" method="post">
+                    <div class="languageRadioButton">
+                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" onchange='this.form.submit();' class="btn-check" name="lang" id="btnradio1" value="uk" autocomplete="off" <%if (request.getSession().getAttribute("lang").equals("uk")) out.print("checked");%>>
+                            <label class="btn btn-outline-primary" for="btnradio1">UKR</label>
 
-                <div class="languageRadioButton">
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                        <label class="btn btn-outline-primary" for="btnradio1">UKR</label>
-
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio3">ENG</label>
+                            <input type="radio" onchange='this.form.submit();' class="btn-check" name="lang" id="btnradio3" value="en" autocomplete="off" <%if (request.getSession().getAttribute("lang").equals("en")) out.print("checked");%>
+                            <label class="btn btn-outline-primary" for="btnradio3">ENG</label>
+                        </div>
                     </div>
-                </div>
+                </form>
                 <c:choose>
                 <c:when test="${sessionScope.currentUser != null}">
                     <form action="<%=request.getContextPath()%>/logout" onsubmit="return confirm('Do you really want to logout?');" class="d-block">
@@ -68,11 +52,9 @@
                         </button>
                     </form>
                 </c:when>
-<%--                <%if (request.getSession().getAttribute("currentUser") != null)--%>
-<%--                    out.println("<div>You're logged as" + ((User)request.getSession().getAttribute("currentUser")).getUserLogin() + "</div>");%>--%>
                     <c:otherwise>
                 <button type="button" class="btn btn-outline-success me-2 loginButton" data-bs-toggle="modal" data-bs-target="#loginModal" id="modalButton">
-                    Login/Register
+                    <fmt:message key="login"/>/<fmt:message key="register"/>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-door-open" viewBox="0 0 16 16">
                         <path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/>
@@ -83,7 +65,7 @@
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Login/Register</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel"><fmt:message key="login"/>/<fmt:message key="register"/></h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
@@ -91,38 +73,38 @@
                                         if (request.getSession().getAttribute("loginError") != null) {
                                             if (request.getSession().getAttribute("loginError").equals("Incorrect info"))
                                                 out.println("<div class='alert alert-danger' " +
-                                                        "id='alertMessage' style='margin-top: 20px; transition-duration: 0.8s;'>Login or password is incorrect</div>\n");
+                                                        "id='alertMessage' style='margin-top: 20px; transition-duration: 0.8s;'>" + header.getString("loginMessage") + "</div>\n");
                                             else if (request.getSession().getAttribute("loginError").equals("Auth needed"))
                                                 out.println("<div class='alert alert-primary' " +
-                                                        "id='alertMessage' style='margin-top: 20px; transition-duration: 0.8s;'>You need to authorize</div>\n");
+                                                        "id='alertMessage' style='margin-top: 20px; transition-duration: 0.8s;'>" + header.getString("authorizeMessage") + "</div>\n");
                                         }
                                     %>
                                     <div class="modal-body">
                                         <form action="login" method="post">
                                             <input type="hidden" name="command" value="login"><br>
-                                            <div class="col-md-10">
-                                                <label for="validationCustomUsername" class="form-label">Login</label>
+                                            <div class="col-md-12">
+                                                <label for="validationCustomUsername" class="form-label"><fmt:message key="login"/></label>
                                                 <div class="input-group">
-                                                    <input type="text" placeholder="Login | Email" class="form-control"
+                                                    <input type="text" placeholder="<fmt:message key="loginAndEmailLabel"/>" class="form-control"
                                                            id="validationCustomUsername" name="login"
                                                            aria-describedby="inputGroupPrepend">
                                                 </div>
                                             </div>
-                                            <div class="col-md-10">
-                                                <label for="validationCustomUsername" class="form-label">Password</label>
+                                            <div class="col-md-12">
+                                                <label for="validationCustomUsername" class="form-label"><fmt:message key="password"/></label>
                                                 <div class="input-group">
-                                                    <input type="text" placeholder="Password" class="form-control"
+                                                    <input type="password" placeholder="Password" class="form-control"
                                                            name="password" id="j" aria-describedby="inputGroupPrepend">
                                                 </div>
                                             </div>
-                                            <input type="submit" value="Login">
+                                            <br>
+                                            <input type="submit" class="btn btn-outline-warning me-2 loginText" value="<fmt:message key="login"/>">
                                             <hr>
                                         </form>
-
-                                        <h5>OR</h5>
-                                        <form action="${pageContext.request.requestURL}register">
+                                        <h5><fmt:message key="or"/></h5>
+                                        <form action="<%=request.getContextPath()%>/register">
                                             <button class="btn btn-outline-success me-2" type="submit" data-toggle="modal"
-                                                    data-target="#loginModalForm">Register
+                                                    data-target="#loginModalForm"><fmt:message key="register"/>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                      fill="currentColor"
                                                      class="bi bi-door-open" viewBox="0 0 16 16">
@@ -133,8 +115,8 @@
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><fmt:message key="close"/></button>
+                                        <button type="button" class="btn btn-primary"><fmt:message key="saveChanges"/></button>
                                     </div>
                                 </div>
                             </div>
@@ -147,10 +129,6 @@
                         "setTimeout(() => {document.getElementById(\"alertMessage\").parentElement.removeChild(document.getElementById(\"alertMessage\"))}, 5000)\n}\n" +
                         "      window.onload = load;</script>");
                 request.getSession().setAttribute("loginError", null);%>
-
-<%--                <%if (request.getAttribute("loginError") != null) out.println("<script src='scripts/openModal.js'></script>");%>--%>
-<%--                <%if (request.getAttribute("loginError") != null) out.println("<script>document.getElementById(\"modalButton\").click()</script>");%>--%>
-            <%--            <c:remove var="loginError" scope="session"/>--%>
             </div>
         </div>
     </nav>

@@ -17,7 +17,9 @@ public class AdminPanelCommand extends FrontCommand{
     @Override
     public void process() throws ServletException, IOException {
         try {
-            List<Exposition> expositionList = DAOFactory.getInstance().getExpositionDAO().getAllExpositions("DATE", 0, 8, new FilterSettings());
+            FilterSettings filterSettings = new FilterSettings();
+            filterSettings.setAdmin(true);
+            List<Exposition> expositionList = DAOFactory.getInstance().getExpositionDAO().getAllExpositions("DATE", 0, 8, filterSettings);
             request.setAttribute("expositions", expositionList);
             Map<Integer, Integer> tickets = DAOFactory.getInstance().getExpositionDAO().ticketsByExpositions();
             request.getSession().setAttribute("ticketsCount", tickets);

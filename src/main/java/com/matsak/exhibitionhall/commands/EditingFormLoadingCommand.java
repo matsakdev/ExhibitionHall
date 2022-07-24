@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 public class EditingFormLoadingCommand extends FrontCommand {
     Logger logger = LogManager.getLogger(EditingFormLoadingCommand.class);
@@ -26,10 +27,19 @@ public class EditingFormLoadingCommand extends FrontCommand {
             try {
                 Exposition exposition = DAOFactory.getInstance().getExpositionDAO().getById(expositionId);
                 request.setAttribute("exposition", exposition);
+                request.getSession().setAttribute("expositionId", exposition.getId());
+                request.getSession().setAttribute("descriptionInput", exposition.getDescription());
                 if (request.getSession().getAttribute("showroomsList") == null) {
                     List<Showroom> showroomsList = DAOFactory.getInstance().getShowroomDAO().getAllShowrooms();
                     request.getSession().setAttribute("showroomsList", showroomsList);
                 }
+                Set<Showroom> showroomsForExposition = DAOFactory.getInstance().getShowroomDAO().getByExposition(expositionId);
+                String showroomsSelected = "";
+                for (Showroom showroom : showroomsForExposition) {
+                    showroomsSelected += showroom.getId() + ";";
+                }
+                if (showroomsSelected.equals("")) showroomsSelected = null;
+                request.getSession().setAttribute("showroomInput", showroomsSelected);
                 logger.debug(request.getRequestURL());
                 // for taking path from jsp
                 request.getSession().setAttribute("currentPath", request.getRequestURL());

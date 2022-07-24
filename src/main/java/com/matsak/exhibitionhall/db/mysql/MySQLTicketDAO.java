@@ -8,17 +8,16 @@ import com.matsak.exhibitionhall.db.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 public class MySQLTicketDAO implements TicketDAO {
     private static final String CREATE_TICKET = "INSERT INTO tickets(Order_date, Exposition_id, User_login, Email) VALUES (?, ?, ?, ?)";
+    private static final String GET_TICKETS_BY_USER = "SELECT t.* FROM tickets t WHERE t.User_login=? ORDER BY t.Order_date DESC";
     Logger logger = LogManager.getLogger(MySQLTicketDAO.class);
 
 
@@ -81,6 +80,43 @@ public class MySQLTicketDAO implements TicketDAO {
             close(stmt);
         }
     }
+
+    @Override
+    public List<Ticket> getTicketsByUser(String userLogin) {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<Ticket> tickets = new ArrayList<>();
+        try (Connection con = DAOFactory.getInstance().getPooledConnection().getConnection(true)) {
+            stmt = con.prepareStatement(GET_TICKETS_BY_USER);
+            stmt.setString(1, userLogin);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                tickets.add(initializeTicket(rs));
+            }
+            return tickets;
+        } catch (SQLException e) {
+            logger.warn("Cannot get tickets for User with userLogin " + userLogin + " " + e.getMessage());
+            return null;
+        } finally {
+            close(stmt);
+            close(rs);
+        }
+    }
+
+    private Ticket initializeTicket(ResultSet rs) {
+        Ticket ticket = new Ticket();
+        try {
+            ticket.setNum(rs.getLong("t.Num"));
+            ticket.setExposition_id(rs.getLong("t.Exposition_id"));
+            ticket.setOrder_date(rs.getTimestamp("t.Order_date"));
+            ticket.setUser_login(rs.getString("t.User_login"));
+            ticket.setEmail(rs.getString("t.Email"));
+        } catch (SQLException e) {
+            logger.error("Failed initializing obtained from DB Exposition. Object is not created.");
+        }
+        return ticket;
+    }
+
     //private static final String CREATE_TICKET = "INSERT INTO tickets(Order_date, Exposition_id, User_login, Email) VALUES (?, ?, ?, ?)";
     private void close(AutoCloseable resource){
         try {

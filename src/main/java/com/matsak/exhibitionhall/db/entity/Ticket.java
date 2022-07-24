@@ -8,6 +8,16 @@ public class Ticket {
     private Timestamp order_date;
     private long exposition_id;
     private String user_login;
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        if (!email.contains("@")) throw new IllegalArgumentException("Email must contains the '@' symbol");
+        this.email = email;
+    }
 
     public long getNum() {
         return num;

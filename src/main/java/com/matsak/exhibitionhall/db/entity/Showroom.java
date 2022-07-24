@@ -26,6 +26,7 @@ public class Showroom {
     }
 
     public void setArea(double area) {
+        if (area <= 0) throw new IllegalArgumentException("Area of the showroom cannot be nagative or 0");
         this.area = area;
     }
 }

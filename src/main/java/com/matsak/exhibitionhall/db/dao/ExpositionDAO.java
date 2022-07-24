@@ -2,6 +2,7 @@ package com.matsak.exhibitionhall.db.dao;
 
 import com.matsak.exhibitionhall.db.entity.Exposition;
 import com.matsak.exhibitionhall.db.entity.FilterSettings;
+import com.matsak.exhibitionhall.db.entity.Ticket;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -19,5 +20,9 @@ public interface ExpositionDAO {
     boolean isImagePathAvailable(String fileName);
     Map<Integer, Integer> ticketsByExpositions();
 
-    boolean UpdateExposition(Exposition updatedExposition, Set<Integer> selectedShowrooms);
+    boolean updateExposition(Exposition updatedExposition, Set<Integer> selectedShowrooms);
+
+    boolean createExposition(Exposition newExposition, Set<Integer> selectedShowroomsId);
+
+    Map<Ticket, Exposition> getExpositionsByTickets(List<Ticket> previousTickets);
 }

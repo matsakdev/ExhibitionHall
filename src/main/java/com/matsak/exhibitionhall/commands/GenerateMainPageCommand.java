@@ -9,9 +9,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class GenerateMainPageCommand extends FrontCommand{
 
@@ -73,8 +73,10 @@ public class GenerateMainPageCommand extends FrontCommand{
         }
         List<Theme> themesList = DAOFactory.getInstance().getThemeDAO().getAllThemes();
         List<Exposition> expositions = getCardsList(page, cardsOnPage, sortingOrder, filterSettings);
+        Map<Long, Set<Theme>> expositionThemes = DAOFactory.getInstance().getThemeDAO().getThemesByExpositions(expositions);
         System.out.println(request.getSession().getAttribute("loginError"));
         request.getSession().setAttribute("expositions", expositions);
+        request.getSession().setAttribute("expositionsThemes", expositionThemes);
         request.getSession().setAttribute("themes", themesList);
         forward("index.jsp");
     }
@@ -82,15 +84,19 @@ public class GenerateMainPageCommand extends FrontCommand{
     private FilterSettings filterHandler() {
         String search = null;
         String parameter = request.getParameter("search");
-        if (!parameter.equals("")) {
+        if (parameter != null && !parameter.equals("")) {
             search = parameter;
         }
         String startDate = null;
         parameter = request.getParameter("startDate");
-        if (!parameter.equals("")) startDate = parameter;
+        if (parameter != null && !parameter.equals("")) {
+            startDate = parameter;
+        }
         String endDate = null;
         parameter = request.getParameter("endDate");
-        if (!parameter.equals("")) endDate = parameter;
+        if (parameter != null && !parameter.equals("")) {
+            endDate = parameter;
+        }
         String[] themes = null;
         String[] themesParameter;
         themesParameter = request.getParameterValues("themesList");
@@ -102,6 +108,7 @@ public class GenerateMainPageCommand extends FrontCommand{
                 int themeId = Integer.parseInt(theme);
                 themesList.add(DAOFactory.getInstance().getThemeDAO().getById(themeId));
             }
+
             } catch (NumberFormatException e) {
                 logger.warn("Number Format of themeId is not correct " + e.getMessage());
             }
@@ -111,6 +118,14 @@ public class GenerateMainPageCommand extends FrontCommand{
         result.setStartDate(startDate);
         result.setEndDate(endDate);
         result.setThemes(themesList);
+        request.getSession().setAttribute("searchFilter", search);
+        request.getSession().setAttribute("startDateFilter", startDate);
+        request.getSession().setAttribute("finalDateFilter", endDate);
+        request.getSession().setAttribute("themesFilter", themesParameter);
+//        DateTimeFormatter formatFromRequest = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        DateTimeFormatter formatForInputValue = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        LocalDate.parse(startDate, formatFromRequest).format()
+
         return result;
     }
 

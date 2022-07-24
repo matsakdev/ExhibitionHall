@@ -10,6 +10,16 @@ public class FilterSettings {
     private String endDate;
     private List<Theme> themes;
     private String search;
+    private boolean isAdmin;
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public String getStartDate() {
@@ -17,7 +27,7 @@ public class FilterSettings {
     }
 
     public void setStartDate(String startDate) {
-        if (startDate.equals(""))  this.startDate = null;
+        if (startDate == null || startDate.equals(""))  this.startDate = null;
         try {
             this.startDate = Timestamp.valueOf(LocalDateTime.parse(startDate, dateFormat)).toString();
         } catch (Exception e) {
@@ -30,7 +40,7 @@ public class FilterSettings {
     }
 
     public void setEndDate(String endDate) {
-        if (endDate.equals(""))  this.endDate = null;
+        if (endDate == null || endDate.equals(""))  this.endDate = null;
         try {
             this.endDate = Timestamp.valueOf(LocalDateTime.parse(endDate, dateFormat).toString()).toString();
         } catch (Exception e) {

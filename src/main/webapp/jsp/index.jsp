@@ -3,7 +3,11 @@
 <%@ taglib prefix="eh" uri="/WEB-INF/customtags.tld" %>
 <%@ taglib prefix="tf" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html lang="en">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="${sessionScope.lang}" />
+<fmt:setBundle basename="mainpage"/>
+
+<html lang="${sessionScope.lang}">
 <head>
     <link href="bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <link href="styles/style.css" rel="stylesheet">
@@ -21,16 +25,16 @@
 
         <div class="items position-relative">
             <eh:CardsList/>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
         </div>
+        <nav aria-label="Page navigation example" class="paginationBox d-inline-block">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#"><fmt:message key="prev"/></a></li>
+                <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+                <li class="page-item"><a class="page-link" href="?page=2">2</a></li>
+                <li class="page-item"><a class="page-link" href="?page=3">3</a></li>
+                <li class="page-item"><a class="page-link" href="#"><fmt:message key="next"/></a></li>
+            </ul>
+        </nav>
     </div>
 
 </div>

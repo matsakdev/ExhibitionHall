@@ -17,6 +17,7 @@ public class Exposition {
     }
 
     public void setImage(String image) {
+        if (image.contains("\\") || image.contains("/")) throw new IllegalArgumentException("Invalid path name for image");
         Image = image;
     }
 

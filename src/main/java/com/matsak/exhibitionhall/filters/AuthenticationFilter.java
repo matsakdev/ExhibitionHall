@@ -27,6 +27,9 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
         String path = req.getRequestURI().substring(req.getContextPath().length()).toLowerCase(Locale.ROOT);
+        if (req.getSession().getAttribute("lang") == null) {
+            req.getSession().setAttribute("lang", "en");
+        }
         for (String page : closedPages) {
             if (path.startsWith(page)) {
                 if (((HttpServletRequest) request).getSession().getAttribute("currentUser") != null) {
