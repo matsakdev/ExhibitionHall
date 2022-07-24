@@ -1,12 +1,357 @@
+* {
+  font-size: 18px;
+}
+
 .items {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
 }
 .items .card {
-  display: inline-block;
   margin: 1.5rem;
-  width: 25rem;
+  width: 40rem;
+}
+
+.languageRadioButton {
+  margin-right: 2rem;
+}
+
+.info {
+  right: 0;
+}
+.info .form-control {
+  margin-top: 1rem;
+}
+
+.input-group > .form-control, .input-group > .form-select {
+  position: relative;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.loginArea {
+  width: 50%;
+  position: relative;
+  padding-left: 5rem;
+}
+
+.offcanvasInput {
+  font-size: larger;
+  width: 20rem;
+}
+
+.autorisationArea {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  position: absolute;
+}
+
+.registrationInputs {
+  overflow: hidden;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.flexContainer {
+  height: 100%;
+}
+
+.itemCard {
+  height: 100%;
+}
+
+.endCard {
+  margin-top: auto;
+}
+
+.editButton :hover {
+  color: green;
+}
+
+.editButtonsColumn {
+  color: black;
+}
+
+.editButtonsColumn :hover {
+  color: blue;
+}
+
+.adminTableRow {
+  cursor: pointer;
+}
+
+.adminTableRow :hover {
+  font-size: 18px;
+}
+
+.imageHolder {
+  height: 25rem;
+  border: #1c1f23 2px solid;
+  border-radius: 2%;
+  margin-top: 5rem;
+  margin-left: 5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+}
+.imageHolder .uploadBox {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.imageHolder .uploadBox .bi-upload {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  -ms-grid-column-align: center;
+      justify-self: center;
+  width: 5rem;
+  height: auto;
+}
+
+.infoInputs {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin-left: 5rem;
+  margin-top: 5rem;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+}
+
+.roomsList {
+  margin-top: 5rem;
+  margin-left: 5rem;
+}
+
+.descriptionArea {
+  margin-top: 5rem;
+  margin-left: 5rem;
+}
+.descriptionArea textarea {
+  resize: none;
+  height: 10em;
+}
+
+.datePicker {
+  width: 49%;
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.dateLabel {
+  display: block;
+}
+
+.dateInput {
+  width: 100%;
+}
+
+.cardImage {
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.imageBox {
+  display: block;
+  width: 100%;
+  height: 25rem;
+}
+
+.priceInput {
+  margin-top: 1rem;
+}
+
+.counterBlock {
+  margin-top: 1rem;
+  margin-left: 40%;
+  width: 50%;
+  justify-items: flex-end;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+}
+.counterBlock button {
+  margin-top: 1rem;
+  width: 25%;
+}
+
+.ticketsCount {
+  font-size: 2rem;
+}
+
+thead {
+  min-width: 100%;
+}
+
+tbody {
+  min-width: 100%;
+}
+
+.clearBasketMessage {
+  display: none;
+}
+
+.modalTable {
+  display: block;
+}
+
+.orderRow {
+  min-height: 8rem;
+  border-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  margin-bottom: 1rem;
+}
+
+.orderImage {
+  width: 12rem;
+  margin-bottom: 1rem;
+  background-size: cover;
+}
+
+.orderSection {
+  -ms-grid-column-align: center;
+      justify-self: center;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-left: 2rem;
+}
+
+.widthContainer {
+  min-height: 100%;
+  padding-top: 2rem;
+}
+
+.orderCount {
+  justify-self: flex-end;
+  margin-left: auto;
+}
+
+.orderContainer {
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+}
+
+.orderTitle {
+  width: 30%;
+}
+
+.orderCount {
+  margin-right: 2rem;
+}
+
+.orderSum {
+  width: 10%;
+}
+
+.emailRadioInput {
+  margin-bottom: 1rem;
+}
+
+#profileLink {
+  cursor: pointer;
+}
+
+.profileButton {
+  cursor: pointer;
+}
+
+.settingsBox {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.filtersBox {
+  margin-left: auto;
+  width: 20%;
+}
+
+.sortingRadioButtons {
+  -ms-grid-column-align: center;
+      justify-self: center;
+}
+
+.searchInput {
+  -ms-flex-line-pack: start;
+      align-content: start;
+  -ms-grid-column-align: center;
+      justify-self: center;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  width: 25%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+}
+
+.input-group {
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+}
+
+.acceptFiltersButton {
+  margin-top: 1rem;
+}
+
+.paginationBox {
+  margin-left: 50%;
+  -webkit-transform: translate(-50%, 0);
+          transform: translate(-50%, 0);
+}
+
+.searchInput {
+  min-height: 3rem;
+  max-height: 3rem;
+  margin-left: 10rem;
+}
+
+.loginText:after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-door-open' viewBox='0 0 16 16'%3E%3Cpath d='M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z'/%3E%3Cpath d='M10.828.122A.5.5 0 0 1 11 .5V1h.5A1.5 1.5 0 0 1 13 2.5V15h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117zM11.5 2H11v13h1V2.5a.5.5 0 0 0-.5-.5zM4 1.934V15h6V1.077l-6 .857z'/%3E%3C/svg%3E") center/contain no-repeat;
 }
