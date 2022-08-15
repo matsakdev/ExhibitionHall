@@ -14,7 +14,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
+/**
+ * This filter checks user's access for different pages.
+ * <p>
+ * Pages which must be accessed only by administrator
+ * <strong>have to be added</strong> to {@link AccessFilter}'s adminPages List.
+ */
 public class AccessFilter implements Filter {
     Logger logger = LogManager.getLogger(AccessFilter.class);
     List<String> userPages = new ArrayList<>();

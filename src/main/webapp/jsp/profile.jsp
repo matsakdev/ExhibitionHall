@@ -6,6 +6,9 @@
 <%@ taglib prefix="eh" uri="/WEB-INF/customtags.tld" %>
 <%@ taglib prefix="tf" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="${sessionScope.lang}" />
+<fmt:setBundle basename="profile"/>
 <%
     Map<Exposition, Integer> exhibitions = null;
     Object exhibitionsAttribute = request.getSession().getAttribute("currentPurchase");
@@ -13,7 +16,7 @@
         exhibitions = (Map<Exposition, Integer>)exhibitionsAttribute;
     }
 %>
-<html lang="en">
+<html lang="${sessionScope.lang}">
 <head>
     <link href="bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <link href="styles/style.css" rel="stylesheet">
@@ -86,8 +89,8 @@
     <button type="submit">Make an order</button>
             </c:when>
             <c:otherwise>
-                <div style="font-size: 25pt">You don't have any expositions in your order. Add it now!</div>
-                <a style="font-size: 25pt; color: #1f1701" href="<%=request.getContextPath()%>/main">Visit the main page</a>
+                <div style="font-size: 25pt"><fmt:message key="clearBasketMessage"/></div>
+                <a style="font-size: 25pt; color: #1f1701" href="<%=request.getContextPath()%>/main"><fmt:message key="visitMainPageMessage"/></a>
             </c:otherwise>
         </c:choose>
     </form>

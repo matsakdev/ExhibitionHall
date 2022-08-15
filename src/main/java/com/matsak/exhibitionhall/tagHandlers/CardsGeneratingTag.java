@@ -22,10 +22,15 @@ import java.util.*;
 
 public class CardsGeneratingTag extends SimpleTagSupport {
     private static final Logger logger = LogManager.getLogger(CardsGeneratingTag.class.getName());
+    private static ResourceBundle langBundle;
 
+    public void setLang(String language) {
+         langBundle = ResourceBundle.getBundle("mainpage", Locale.forLanguageTag(language));
+    }
 
-        public void doTag() throws JspException, IOException {
+    public void doTag() throws JspException, IOException {
             JspContext ctx = getJspContext();
+            String language = (String) ctx.getAttribute("lang");
             PageContext pageContext = (PageContext) getJspContext();
             HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             Object expositionListObject;
@@ -85,7 +90,7 @@ public class CardsGeneratingTag extends SimpleTagSupport {
                         "            </div>");
             }
             if (expositionList.size() == 0) {
-                out.println("<div style=\"font-size: 25pt\">That's no more expositions for now ;(</div>");
+                out.println("<div style=\"font-size: 25pt\">" + langBundle.getString("missingExhibitionsMessage") + "</div>");
             }
             logger.debug("List of expositions");
         }

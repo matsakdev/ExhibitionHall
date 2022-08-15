@@ -32,7 +32,7 @@
                             <input type="radio" onchange='this.form.submit();' class="btn-check" name="lang" id="btnradio1" value="uk" autocomplete="off" <%if (request.getSession().getAttribute("lang").equals("uk")) out.print("checked");%>>
                             <label class="btn btn-outline-primary" for="btnradio1">UKR</label>
 
-                            <input type="radio" onchange='this.form.submit();' class="btn-check" name="lang" id="btnradio3" value="en" autocomplete="off" <%if (request.getSession().getAttribute("lang").equals("en")) out.print("checked");%>
+                            <input type="radio" onchange='this.form.submit();' class="btn-check" name="lang" id="btnradio3" value="en" autocomplete="off" <%if (request.getSession().getAttribute("lang").equals("en")) out.print("checked");%>>
                             <label class="btn btn-outline-primary" for="btnradio3">ENG</label>
                         </div>
                     </div>

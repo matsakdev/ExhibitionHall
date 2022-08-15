@@ -18,13 +18,15 @@
 <body>
 <tf:header></tf:header>
 <div class="d-flex align-items-center justify-content-center flex-column">
-    <form action="admin/expositions/new">
-        <button type="submit" class="btn btn-primary" style="justify-self: flex-end">Add new</button>
-    </form>
+
     <div class="container-fluid col-md-12">
+        <tf:filters/>
         <tf:adminTable></tf:adminTable>
 
     </div>
+    <form action="admin/expositions/new">
+        <button type="submit" class="btn btn-primary" style="justify-self: flex-end">Add new</button>
+    </form>
 </div>
 </body>
 </html>

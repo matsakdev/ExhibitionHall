@@ -127,6 +127,7 @@ public class MySQLUserDAO implements UserDAO {
 
     @Override
     public User getByLogin(String userLogin){
+        if (userLogin.trim().equals("")) throw new IllegalArgumentException("Login cannot be clear");
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -149,17 +150,14 @@ public class MySQLUserDAO implements UserDAO {
                 throw new IllegalArgumentException();
             }
             return user;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }  catch (IllegalArgumentException e){
-            //todo log
+        } catch (SQLException | IllegalArgumentException e) {
+            logger.info("Cannot get user from db for login: " + userLogin);
             return null;
         }
         finally {
             close(con);
             close(stmt);
-            close (rs);
+            close(rs);
         }
     }
 
@@ -215,7 +213,8 @@ public class MySQLUserDAO implements UserDAO {
             MessageDigest digest = MessageDigest.getInstance("SHA-512");
             digest.update((password + settings.getString("salt")).getBytes(StandardCharsets.UTF_8));
             byte[] hash = digest.digest();
-            return Hex.encodeHexString(hash);
+            String value = Hex.encodeHexString(hash);
+            return value;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

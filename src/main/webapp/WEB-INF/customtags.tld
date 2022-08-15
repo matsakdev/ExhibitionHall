@@ -12,6 +12,11 @@
         <name>CardsList</name>
         <tag-class>com.matsak.exhibitionhall.tagHandlers.CardsGeneratingTag</tag-class>
         <body-content>empty</body-content>
+        <attribute>
+            <name>lang</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     <tag>
         <name>ThemesList</name>

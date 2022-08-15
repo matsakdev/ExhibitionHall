@@ -1,18 +1,20 @@
-<%@ tag import="com.matsak.exhibitionhall.db.entity.User" %>
 <%@ tag import="com.matsak.exhibitionhall.db.entity.Exposition" %>
 <%@ tag import="java.util.List" %>
 <%@ tag import="java.util.Optional" %>
 <%@ tag import="java.util.Map" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%Map<Integer, Integer> ticketsCount = (Map<Integer, Integer>)session.getAttribute("ticketsCount");%>
-<div class="tableBox col-md-10">
+<jsp:useBean id="now" class="java.util.Date" />
+<div class="tableBox col-md-12">
     <table class="table table-striped table-hover caption-top">
         <caption>List of expositions</caption>
         <thead class="table-dark">
         <tr>
             <th scope="col">#</th>
             <th scope="col">Title</th>
-            <th scope="col">Date</th>
+            <th scope="col">Begins</th>
+            <th scope="col">Ends</th>
             <th scope="col">Author</th>
             <th scope="col">Tickets</th>
             <th scope="col">Edit</th>
@@ -24,10 +26,13 @@
         int iterator = rows * (pageNum - 1) + 1;%>
 <%--        <c:set var="ticketsCount" value="${(sessionScope['ticketsCount'] == null || requestScope['ticketsCount'] eq '') ? 'not available' : sessionScope['ticketsCount']}"/>--%>
         <c:forEach var="exposition" items="${expositions}">
-            <tr class="adminTableRow">
+        <tr class="adminTableRow"
+            <c:if test="${now >= exposition.getExpStartDate() && now <= exposition.getExpFinalDate() && selectCurrent == true}">style="background-color: lightgreen"</c:if>
+        >
                 <th scope="row"><%=iterator%></th>
                 <td class="adminTableCell" colspan="1"><c:out value="${exposition.getExpName()}"/></td>
-                <td class="adminTableCell" colspan="1"><c:out value="${exposition.getExpStartDate()}"/></td>
+                <td class="adminTableCell" colspan="1"><fmt:formatDate value="${exposition.getExpStartDate()}" type="both" pattern="dd-MM-yyyy HH:mm"/></td>
+                <td class="adminTableCell" colspan="1"><fmt:formatDate value="${exposition.getExpFinalDate()}" type="both" pattern="dd-MM-yyyy HH:mm"/></td>
                 <td class="adminTableCell" colspan="1"><c:out value="${exposition.getAuthor()}"/></td>
                 <td class="adminTableCell" colspan="1">
                     <c:set var="expositionId" scope="request" value="${exposition.getId()}"/>
@@ -49,14 +54,5 @@
             <%iterator++;%>
         </c:forEach>
         </tbody>
-        <tfoot>
-        <tr>
-            <td>Footer</td>
-            <td>Footer</td>
-            <td>Footer</td>
-            <td>Footer</td>
-            <td>Footer</td>
-        </tr>
-        </tfoot>
     </table>
 </div>

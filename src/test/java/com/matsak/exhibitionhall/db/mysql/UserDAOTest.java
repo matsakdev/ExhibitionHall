@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +36,7 @@ public class UserDAOTest {
    private static void initialize(){
        DAOFactory.setDaoFactoryFCN("com.matsak.exhibitionhall.db.mysql.MySQLDAOFactory");
        try {
-           DAOFactory daoFactory = DAOFactory.getInstance();
+//           DAOFactory daoFactory = DAOFactory.getInstance();
            initializeData();
            setUsers();
        } catch (Exception e) {
@@ -52,6 +53,7 @@ public class UserDAOTest {
         normalUser.setLastName("lastName01");
         normalUser.setEmail("email01@gmail.com");
         normalUser.setPhone("380990756433");
+        normalUser.setUserRole("user");
         users.add(normalUser);
 
         //null user
@@ -66,7 +68,7 @@ public class UserDAOTest {
     }
 
     private static void initializeData() throws SQLException {
-       //real user
+        //real user
         logins.add("login01");
         passwords.add("password01");
         firstNames.add("firstName01");
@@ -141,10 +143,21 @@ public class UserDAOTest {
     public void getByLoginTest() throws SQLException {
        initializeRealUser();
        MySQLUserDAO mySQLUserDAO = new MySQLUserDAO(connection);
-       User user = mySQLUserDAO.getByLogin("admin");
+       User user = mySQLUserDAO.getByLogin("login01");
+       String usrClass = user.getClass().toString();
+       String getUsrClass = users.get(0).getClass().toString();
+       String userRole = user.getUserRole();
+       String getUsrRole = users.get(0).getUserRole();
+       boolean isOneobj = users.get(0) == (User)user;
+       boolean isEquals = users.get(0).equals((User)user);
         assertEquals(users.get(0), user);
     }
 
+    @Test
+    public void getByEmptyLoginTest() throws IllegalArgumentException, SQLException {
+        MySQLUserDAO mySQLUserDAO = new MySQLUserDAO(connection);
+        assertThrows(IllegalArgumentException.class, () -> mySQLUserDAO.getByLogin(""));
+    }
     @Test
     public void getByPhoneNumberTest() throws SQLException {
        initializeRealUser();
