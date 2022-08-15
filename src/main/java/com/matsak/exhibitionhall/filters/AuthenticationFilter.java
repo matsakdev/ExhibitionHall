@@ -10,7 +10,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
+/**
+ * This filter checks user's authentication in the system.
+ * <p>
+ * Pages which must be closed for guests
+ * <strong>have to be added</strong> to {@link AuthenticationFilter}'s closedPages List.
+ * <p>
+ *
+ */
 public class AuthenticationFilter implements Filter {
     Logger logger = LogManager.getLogger(AuthenticationFilter.class);
     List<String> closedPages = new ArrayList<>();
@@ -27,9 +34,6 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
         String path = req.getRequestURI().substring(req.getContextPath().length()).toLowerCase(Locale.ROOT);
-        if (req.getSession().getAttribute("lang") == null) {
-            req.getSession().setAttribute("lang", "en");
-        }
         for (String page : closedPages) {
             if (path.startsWith(page)) {
                 if (((HttpServletRequest) request).getSession().getAttribute("currentUser") != null) {

@@ -57,6 +57,9 @@ public class Dispatcher {
             return commands.get("profile");
         }
         else if (path.startsWith("/admin")) {
+//            if (path.startsWith("admin/filter")) {
+//                return commands.get("adminFilter");
+//            }
             String regex = "(\\/admin\\/expositions\\/[0-9]+)";
             if (path.matches(regex + "$")) {
                 return commands.get("expositions");

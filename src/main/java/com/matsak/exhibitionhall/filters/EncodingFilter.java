@@ -3,7 +3,15 @@ package com.matsak.exhibitionhall.filters;
 import jakarta.servlet.*;
 
 import java.io.IOException;
-
+/**
+ * This filter sets the encoding of every request and response.
+ * <p>
+ * Encoding by default: <strong>UTF-8</strong><p>
+ * For changing encoding change the {@link EncodingFilter#init(FilterConfig)} method.
+ * <strong>have to be added</strong> to {@link AccessFilter}'s adminPages List.
+ * <p>
+ *
+ */
 public class EncodingFilter implements Filter {
     private String encoding;
     @Override

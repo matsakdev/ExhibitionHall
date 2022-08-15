@@ -2,6 +2,9 @@
 <%@ taglib prefix="eh" uri="/WEB-INF/customtags.tld" %>
 <%@ taglib prefix="tf" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="${sessionScope.lang}" />
+<fmt:setBundle basename="profile"/>
 <html lang="en">
 <head>
   <link href="bootstrap/dist/css/bootstrap.css" rel="stylesheet">
@@ -16,7 +19,7 @@
 <tf:header></tf:header>
 <div class="bg-dark">
   <div class="container-fluid col-md-10 bg-primary widthContainer">
-  Order is successful!
+  <fmt:message key="successfulOrder"/>
   </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

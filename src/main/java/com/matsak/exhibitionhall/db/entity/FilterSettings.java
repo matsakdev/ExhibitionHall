@@ -11,6 +11,15 @@ public class FilterSettings {
     private List<Theme> themes;
     private String search;
     private boolean isAdmin;
+    private boolean showCompleted = false;
+
+    public boolean isShowCompleted() {
+        return showCompleted;
+    }
+
+    public void setShowCompleted(boolean showCompleted) {
+        this.showCompleted = showCompleted;
+    }
 
     public boolean isAdmin() {
         return isAdmin;

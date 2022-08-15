@@ -24,7 +24,7 @@
         <tf:settings></tf:settings>
 
         <div class="items position-relative">
-            <eh:CardsList/>
+            <eh:CardsList lang="${sessionScope.lang}"/>
         </div>
         <nav aria-label="Page navigation example" class="paginationBox d-inline-block">
             <ul class="pagination">

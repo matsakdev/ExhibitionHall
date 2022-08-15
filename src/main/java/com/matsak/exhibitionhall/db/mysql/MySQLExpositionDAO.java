@@ -60,22 +60,22 @@ public class MySQLExpositionDAO implements ExpositionDAO {
             String filtersString = filterSearchHandler(filters);
             List<Exposition> expositions = new ArrayList<>();
             int num = 0;
-            switch (orderType) {
-                case "DATE": {
+            switch (orderType.toLowerCase()) {
+                case "date": {
                     String wherePart = "";
                     if (filtersString.length() != 0) wherePart = "WHERE " + filtersString + " ";
                     String query = GET_EXPOSITIONS + wherePart + GROUP_BY_EXP_ID + ORDER_DATE;
                     stmt = connection.prepareStatement(query);
                     break;
                 }
-                case "PRICE": {
+                case "price": {
                     String wherePart = "";
                     if (filtersString.length() != 0) wherePart = "WHERE " + filtersString + " ";
                     String query = GET_EXPOSITIONS + wherePart + GROUP_BY_EXP_ID + ORDER_PRICE;
                     stmt = connection.prepareStatement(query);
                     break;
                 }
-                case "POPULARITY": {
+                case "popularity": {
                     String wherePart = "";
                     if (filtersString.length() != 0) wherePart = "WHERE " + filtersString + " ";
                     String query = GET_EXPOSITIONS_TICKETS + wherePart + GROUP_BY_EXP_ID + ORDER_POPULARITY;
@@ -108,7 +108,7 @@ public class MySQLExpositionDAO implements ExpositionDAO {
     private String filterSearchHandler(FilterSettings filters) {
         StringBuilder result = new StringBuilder();
         if (filters.getSearch() != null) {
-            result.append("e.EXP_name LIKE '%" + filters.getSearch() + "%' OR e.Author LIKE '%" + filters.getSearch() + "%' ");
+            result.append("(e.EXP_name LIKE '%" + filters.getSearch() + "%' OR e.Author LIKE '%" + filters.getSearch() + "%') ");
         }
         if (filters.getStartDate() != null) {
             if (!result.isEmpty()) result.append("AND ");
@@ -131,7 +131,7 @@ public class MySQLExpositionDAO implements ExpositionDAO {
             }
             result.append(") ");
         }
-        if (!filters.isAdmin()) {
+        if (!filters.isAdmin() || !filters.isShowCompleted()) {
             if (!result.isEmpty()) result.append("AND ");
             result.append(DATE_CORRECTNESS_CHECK).append(" ");
         }

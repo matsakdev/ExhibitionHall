@@ -3,8 +3,10 @@ package com.matsak.exhibitionhall.db.mysql;
 import com.matsak.exhibitionhall.db.dao.DAOFactory;
 import com.matsak.exhibitionhall.db.dao.TicketDAO;
 import com.matsak.exhibitionhall.db.entity.Exposition;
+import com.matsak.exhibitionhall.db.entity.Order;
 import com.matsak.exhibitionhall.db.entity.Ticket;
 import com.matsak.exhibitionhall.db.entity.User;
+import com.matsak.exhibitionhall.publisher.EventManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,8 +20,13 @@ import java.util.Map;
 public class MySQLTicketDAO implements TicketDAO {
     private static final String CREATE_TICKET = "INSERT INTO tickets(Order_date, Exposition_id, User_login, Email) VALUES (?, ?, ?, ?)";
     private static final String GET_TICKETS_BY_USER = "SELECT t.* FROM tickets t WHERE t.User_login=? ORDER BY t.Order_date DESC";
+    private static final String GET_BY_ID = "SELECT t.* FROM tickets t WHERE Num=?";
     Logger logger = LogManager.getLogger(MySQLTicketDAO.class);
+    private final EventManager events;
 
+    public MySQLTicketDAO() {
+        this.events = new EventManager("save");
+    }
 
     @Override
     public void create(User user, Exposition exposition) {
@@ -28,7 +35,20 @@ public class MySQLTicketDAO implements TicketDAO {
 
     @Override
     public Ticket getById(long id) {
-        return null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try (Connection connection = DAOFactory.getInstance().getPooledConnection().getConnection(true)) {
+            stmt = connection.prepareStatement(GET_BY_ID);
+            stmt.setLong(1, id);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                return initializeTicket(rs);
+            }
+            return null;
+        } catch (SQLException e) {
+            logger.warn("Cannot get ticket By Id " + id);
+            return null;
+        }
     }
 
     @Override
@@ -43,11 +63,12 @@ public class MySQLTicketDAO implements TicketDAO {
     }
 
     @Override
-    public boolean createTickets(Map<Exposition, Integer> expositionsCounts, User user, String email) {
+    public List<Ticket> createTickets(Map<Exposition, Integer> expositionsCounts, User user, String email) {
         Connection con = null;
         PreparedStatement stmt = null;
         LocalDateTime orderDateTime = LocalDateTime.now();
         Timestamp orderDate = Timestamp.valueOf(orderDateTime);
+        List<Ticket> tickets = new ArrayList<>();
         try {
             con = DAOFactory.getInstance().getPooledConnection().getConnection(false);
             for (Exposition exposition : expositionsCounts.keySet()) {
@@ -56,29 +77,35 @@ public class MySQLTicketDAO implements TicketDAO {
                     if (exposition.getExpFinalDate().compareTo(orderDate) < 0) {
                         throw new IllegalArgumentException();
                     }
-                    stmt = con.prepareStatement(CREATE_TICKET);
+                    stmt = con.prepareStatement(CREATE_TICKET, Statement.RETURN_GENERATED_KEYS);
                     stmt.setTimestamp(1, orderDate);
                     stmt.setLong(2, exposition.getId());
                     stmt.setString(3, user.getUserLogin());
                     stmt.setString(4, email);
                     if (stmt.executeUpdate() == 0) throw new SQLException();
+                    ResultSet generatedKeys = stmt.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        con.commit();
+                        tickets.add(getById(generatedKeys.getLong(1)));
+                    } else {
+                        throw new SQLException("Creating ticket failed, no ID obtained.");
+                    }
                     i++;
                 }
             }
-            con.commit();
-            return true;
+
+            events.notify("save", new Order(user, email, tickets));
         } catch (SQLException e) {
             logger.warn("Tickets was not created in DB. SQL statement failed" + e.getMessage());
             rollback(con);
-            return false;
         } catch (IllegalArgumentException e) {
             logger.error("The final date of the exposition was lesser than current date. " + e.getMessage());
             rollback(con);
-            return false;
         } finally {
             close(con);
             close(stmt);
         }
+        return tickets;
     }
 
     @Override
@@ -101,6 +128,11 @@ public class MySQLTicketDAO implements TicketDAO {
             close(stmt);
             close(rs);
         }
+    }
+
+    @Override
+    public EventManager getEventManager() {
+        return events;
     }
 
     private Ticket initializeTicket(ResultSet rs) {

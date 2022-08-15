@@ -24,10 +24,8 @@ public class LoginCommand extends FrontCommand{
         }
         try {
             UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-            System.out.println(login + " " + password);
-            logger.debug("User now in logging - login: " + login + "; password: " + password);
             User user = DAOFactory.getInstance().getUserDAO().getByLogin(login);
-            if (user != null && user.getUserPassword().equals(userDAO.hashPassword(user.getUserPassword()))){
+            if (user != null && user.getUserPassword().equals(userDAO.hashPassword(password))){
                 request.getSession().setAttribute("currentUser", user);
                 if (user.getUserRole().equals("user")) request.getSession().setAttribute("userRole", "user");
                 else if (user.getUserRole().equals("administrator")) request.getSession().setAttribute("userRole", "administrator");
